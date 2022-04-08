@@ -1,3 +1,4 @@
+
 /**
  * This class represents a field within the game table. Every
  * field has a set FieldType which determines whether the field
@@ -26,6 +27,11 @@ public class Field
 		return _type == FieldType.Mine;
 	}
 
+	/**
+	 * This method changes the current state of this field
+	 * to the one specified in the arguments.
+	 */
+	
 	public void SetState(FieldState state)
 	{
 		_state = state;
