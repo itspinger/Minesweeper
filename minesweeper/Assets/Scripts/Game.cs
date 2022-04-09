@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = System.Random;
 
 public class Game : MonoBehaviour
 {
@@ -14,5 +15,8 @@ public class Game : MonoBehaviour
     public void Start()
     {
         // Load all the necessary game data
+        _width = 16;
+        _height = 16;
+        _mines = new Random().Next((_width - 1) * (_height - 1));
     }
 }
