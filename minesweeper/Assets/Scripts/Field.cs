@@ -18,9 +18,10 @@ public class Field
 	private readonly int _adjacentMines;
 	private bool _exploded;
 
-	public Field(FieldType type, int adjacentMines)
+	public Field(FieldType type, Vector3Int position, int adjacentMines)
 	{
 		_type = type;
+		_position = position;
 		_adjacentMines = adjacentMines;
 	}
 
