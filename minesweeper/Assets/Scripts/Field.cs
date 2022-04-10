@@ -12,10 +12,10 @@ using UnityEngine;
 public class Field
 {
 	private FieldType _type = FieldType.Default;
-	private FieldState _state = FieldState.Hidden;
+	private FieldState _state = FieldState.Revealed;
 
-	private Vector3Int _position;
-	private int _adjacentMines = 0;
+	private readonly Vector3Int _position;
+	private int _adjacentMines;
 	private bool _exploded;
 
 	public Field(Vector3Int position)
@@ -53,8 +53,7 @@ public class Field
 	}
 
 	/**
-	 *
-	 * 
+	 * This method sets the amount of adjacent mines to this field.
 	 */
 	
 	public void SetAdjacentMines(int adjacentMines)
