@@ -72,12 +72,19 @@ public class TileManager : MonoBehaviour
 		return tiles.FirstOrDefault(tile => tile.name.Equals(tileName));
 	}
 	
-	/**
-	 * This method returns a tile with it's integer representation.
-	 */
-
+	/// This method returns a tile with it's integer representation.
 	private Tile GetTile(int tile)
 	{
 		return GetTile(tile.ToString());
+	}
+	
+	/**
+	 * This method returns the tilemap
+	 * of this manager.
+	 */
+
+	public Tilemap GetTilemap()
+	{
+		return _tilemap;
 	}
 }

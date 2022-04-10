@@ -11,18 +11,16 @@ using UnityEngine;
 
 public class Field
 {
-	private readonly FieldType _type;
+	private FieldType _type = FieldType.Default;
 	private FieldState _state = FieldState.Hidden;
 
 	private Vector3Int _position;
-	private readonly int _adjacentMines;
+	private int _adjacentMines = 0;
 	private bool _exploded;
 
-	public Field(FieldType type, Vector3Int position, int adjacentMines)
+	public Field(Vector3Int position)
 	{
-		_type = type;
 		_position = position;
-		_adjacentMines = adjacentMines;
 	}
 
 	/*
@@ -43,6 +41,25 @@ public class Field
 	public void SetState(FieldState state)
 	{
 		_state = state;
+	}
+
+	/**
+	 * This method changes the type of this field.
+	 */
+	
+	public void SetType(FieldType type)
+	{
+		_type = type;
+	}
+
+	/**
+	 *
+	 * 
+	 */
+	
+	public void SetAdjacentMines(int adjacentMines)
+	{
+		_adjacentMines = adjacentMines;
 	}
 
 	/**
