@@ -1,3 +1,5 @@
+using UnityEngine;
+
 
 /**
  * This class represents a field within the game table. Every
@@ -12,9 +14,14 @@ public class Field
 	private readonly FieldType _type;
 	private FieldState _state = FieldState.Hidden;
 
-	public Field(FieldType type)
+	private Vector3Int _position;
+	private readonly int _adjacentMines;
+	private bool _exploded;
+
+	public Field(FieldType type, int adjacentMines)
 	{
 		_type = type;
+		_adjacentMines = adjacentMines;
 	}
 
 	/*
@@ -36,6 +43,26 @@ public class Field
 	{
 		_state = state;
 	}
+
+	/**
+	 * This method returns whether this specific field
+	 * was the one that exploded, if any exploded at all.
+	 */
+	
+	public bool HasExploded()
+	{
+		return _exploded;
+	}
+
+	/**
+	 * This method returns the amount of mines adjacent
+	 * to this field.
+	 */
+
+	public int GetAdjacentMines()
+	{
+		return _adjacentMines;
+	}
 	
 	/*
 	 * This method returns the field type of this field.
@@ -56,6 +83,15 @@ public class Field
 	public FieldState GetState()
 	{
 		return _state;
+	}
+
+	/**
+	 * This method returns the position of this field.
+	 */
+	
+	public Vector3Int GetPosition()
+	{
+		return _position;
 	}
 
 	/**
