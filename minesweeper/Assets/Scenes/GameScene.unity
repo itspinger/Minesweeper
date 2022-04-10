@@ -419,13 +419,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 67b90d752b3bc3147a311c6aa7db0934, type: 2}
   - {fileID: 11400000, guid: 53a5f3a357aa6494bbc7cb1a6c292909, type: 2}
   - {fileID: 11400000, guid: 496536f76b85584438ebc7c29576fa1a, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 2f9258fe8ed606c438791ebd38bc712b, type: 2}
+  - {fileID: 11400000, guid: 2e6bb702e12eb9844a44763cdc24bae4, type: 2}
+  - {fileID: 11400000, guid: a1a3d09cd49cb1e4badd3e25af502782, type: 2}
+  - {fileID: 11400000, guid: d0a926b8736e456409cbf62fda63fd89, type: 2}
+  - {fileID: 11400000, guid: 8b778c3b4e8a5a14d8bb3d0a4d7ef0c9, type: 2}
+  - {fileID: 11400000, guid: 8e113d74596b39c4896dd004f5ab6ad1, type: 2}
+  - {fileID: 11400000, guid: 7aa6950f5f2739a4ba134afa68161c8f, type: 2}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -519,6 +519,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2119401069}
   - component: {fileID: 2119401068}
+  - component: {fileID: 2119401070}
   m_Layer: 0
   m_Name: GameGrid
   m_TagString: Untagged
@@ -553,3 +554,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2119401070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2119401067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 216c442d4c190844e922bcc35e24bcd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

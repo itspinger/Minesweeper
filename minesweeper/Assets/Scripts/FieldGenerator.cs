@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -33,7 +35,7 @@ public class FieldGenerator
 			var m = Random.Range(0, width);
 			var n = Random.Range(0, height);
 
-			while (IsInvalid(fields, m, n, width, height))
+			while (IsInvalid(fields, exception, m, n))
 			{
 				m++;
 
@@ -49,23 +51,33 @@ public class FieldGenerator
 				}
 			}
 			
-			fields[n, m].SetType(Field.FieldType.Mine);
+			fields[m, n].SetType(Field.FieldType.Mine);
 		}
 	}
 
-	private bool IsInvalid(Field[,] fields, int m, int n, int width, int height)
+	private bool IsInvalid(Field[,] fields, Field exception, int x, int y)
 	{
-		if (m == 0 && (n == 0 || n == (height - 1)))
+		var pos = exception.GetPosition();
+		
+		// Check if it's the same field
+		if (pos.x == x && pos.y == y)
 		{
 			return true;
 		}
-
-		if (m == width - 1 && (n == 0 || n == (height - 1)))
+		
+		var adjacentFields = GetAdjacentFields(fields, pos.x, pos.y);
+		foreach (var v in adjacentFields)
 		{
-			return true;
+			pos = v.GetPosition();
+			
+			// Check if it's the same position
+			if (pos.x == x && pos.y == y)
+			{
+				return true;
+			}
 		}
-
-		return fields[m, n].IsMine();
+		
+		return fields[x, y].IsMine();
 	}
 
 	private void CountAdjacent(Field[,] fields)
@@ -86,25 +98,27 @@ public class FieldGenerator
 		}
 	}
 
-	private int CountAdjacent(Field[, ] fields, int x, int y)
+	private IEnumerable<Field> GetAdjacentFields(Field[,] fields, int x, int y)
 	{
+		var adjacent = new List<Field>();
+		
 		var width = fields.GetLength(0);
 		var height = fields.GetLength(1);
-
-		var count = 0;
 		
-		for (var i = Math.Max(0, x - 1); i <= Math.Min(x + 1, width - 1); i++) 
+		for (var i = Math.Max(0, x - 1); i <= Math.Min(x + 1, width - 1); i++)
 		{
 			for (var j = Math.Max(0, y - 1); j <= Math.Min(y + 1, height - 1); j++)
 			{
-				if (fields[i, j].GetFieldType() == Field.FieldType.Mine)
-				{
-					++count;
-				}
+				adjacent.Add(fields[i, j]);
 			}
 		}
 
-		return count;
+		return adjacent;
+	}
+
+	private int CountAdjacent(Field[,] fields, int x, int y)
+	{
+		return GetAdjacentFields(fields, x, y).Count(field => field.GetFieldType() == Field.FieldType.Mine);
 	}
 	
 }

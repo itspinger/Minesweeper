@@ -12,7 +12,7 @@ using UnityEngine;
 public class Field
 {
 	private FieldType _type = FieldType.Default;
-	private FieldState _state = FieldState.Revealed;
+	private FieldState _state = FieldState.Hidden;
 
 	private readonly Vector3Int _position;
 	private int _adjacentMines;
@@ -50,6 +50,15 @@ public class Field
 	public void SetType(FieldType type)
 	{
 		_type = type;
+	}
+
+	/**
+	 * This method sets this field as an exploded mine.
+	 */
+	
+	public void SetExploded(bool exploded)
+	{
+		_exploded = exploded;
 	}
 
 	/**

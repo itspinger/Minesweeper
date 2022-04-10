@@ -52,18 +52,13 @@ public class TileManager : MonoBehaviour
 		{
 			return GetTile("Hidden");
 		}
-		
-		Debug.Log("ruf");
 
 		// This means that the state is revealed
 		if (field.GetFieldType() == Field.FieldType.Default)
 		{
-			Debug.Log("Im here");
-			return GetTile(field.GetAdjacentMines().ToString());
+			return GetTile(field.GetAdjacentMines());
 		}
 
-		Debug.Log("ruf");
-		
 		return field.HasExploded() ? GetTile("ExplodedMine") : GetTile("Mine");
 	}
 	
@@ -74,12 +69,7 @@ public class TileManager : MonoBehaviour
 
 	private Tile GetTile(string tileName)
 	{
-		Debug.Log(tileName);
-		return tiles.FirstOrDefault(tile =>
-		{
-			Debug.Log(tile.name + " " + tileName);
-			return tile.name.Equals(tileName);
-		});
+		return tiles.FirstOrDefault(tile => tile.name.Equals(tileName));
 	}
 	
 	/// This method returns a tile with it's integer representation.
