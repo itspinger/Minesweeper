@@ -106,8 +106,7 @@ public class Game : MonoBehaviour
         }
 
         FloodFill(field);
-        field.SetState(Field.FieldState.Revealed);
-        _tileManager.UpdateField(field);
+        _tileManager.UpdateFields(_fields);
     }
 
     private void FloodFill(Field field)
@@ -136,20 +135,24 @@ public class Game : MonoBehaviour
         var adjacent = new List<Field>();
         var pos = field.GetPosition();
 
-        for (var i = Math.Max(0, pos.x - 1); i <= Math.Min(_width - 1, pos.x + 1); i++)
-        { 
-            if (i == 0)
-                continue;
-            
-            adjacent.Add(_fields[pos.x + i, pos.y]);
+        if (pos.x + 1 < _width)
+        {
+            adjacent.Add(_fields[pos.x + 1, pos.y]);
         }
 
-        for (var i = Math.Max(0, pos.y - 1); i <= Math.Min(_height - 1, pos.y + 1); i++)
+        if (pos.x - 1 >= 0)
         {
-            if (i == 0)
-                continue;
-            
-            adjacent.Add(_fields[pos.x, pos.y + i]);
+            adjacent.Add(_fields[pos.x - 1, pos.y]);
+        }
+        
+        if (pos.y + 1 < _height)
+        {
+            adjacent.Add(_fields[pos.x, pos.y + 1]);
+        }
+
+        if (pos.y - 1 >= 0)
+        {
+            adjacent.Add(_fields[pos.x, pos.y - 1]);
         }
 
         return adjacent;
