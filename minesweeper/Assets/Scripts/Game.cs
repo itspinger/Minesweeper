@@ -78,7 +78,8 @@ public class Game : MonoBehaviour
             // We generate mines after first click
             // Because we don't want the chance of the player
             // Losing within the first click
-            new FieldGenerator(_fields, _mines, field);
+            FieldGenerator.CreateMines(_fields, _mines, field);
+            FieldGenerator.CountAdjacentMines(_fields);
             _tileManager.UpdateFields(_fields);
 
             // Update the click

@@ -4,14 +4,8 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class FieldGenerator
+public static class FieldGenerator
 {
-
-	public FieldGenerator(Field[,] fields, int mines, Field exception)
-	{
-		CreateMines(fields, mines, exception);
-		CountAdjacent(fields);
-	}
 
 	public static void CreateDefaultFieldTable(Field[,] fields, TileManager tileManager)
 	{
@@ -25,7 +19,7 @@ public class FieldGenerator
 		}
 	}
 	
-	private void CreateMines(Field[,] fields, int mines, Field exception)
+	public static void CreateMines(Field[,] fields, int mines, Field exception)
 	{
 		var width = fields.GetLength(0);
 		var height = fields.GetLength(1);
@@ -54,8 +48,26 @@ public class FieldGenerator
 			fields[m, n].SetType(Field.FieldType.Mine);
 		}
 	}
+	
+	public static void CountAdjacentMines(Field[,] fields)
+	{
+		for (var i = 0; i < fields.GetLength(0); i++)
+		{
+			for (var j = 0; j < fields.GetLength(1); j++)
+			{
+				var field = fields[i, j];
+				
+				// Check if it's a mine
+				if (field.GetFieldType() == Field.FieldType.Mine)
+					continue;
 
-	private bool IsInvalid(Field[,] fields, Field exception, int x, int y)
+				var count = CountAdjacent(fields, i, j);
+				fields[i, j].SetAdjacentMines(count);
+			}
+		}
+	}
+
+	private static bool IsInvalid(Field[,] fields, Field exception, int x, int y)
 	{
 		var pos = exception.GetPosition();
 		
@@ -80,25 +92,12 @@ public class FieldGenerator
 		return fields[x, y].IsMine();
 	}
 
-	private void CountAdjacent(Field[,] fields)
+	private static int CountAdjacent(Field[,] fields, int x, int y)
 	{
-		for (var i = 0; i < fields.GetLength(0); i++)
-		{
-			for (var j = 0; j < fields.GetLength(1); j++)
-			{
-				var field = fields[i, j];
-				
-				// Check if it's a mine
-				if (field.GetFieldType() == Field.FieldType.Mine)
-					continue;
-
-				var count = CountAdjacent(fields, i, j);
-				fields[i, j].SetAdjacentMines(count);
-			}
-		}
+		return GetAdjacentFields(fields, x, y).Count(field => field.GetFieldType() == Field.FieldType.Mine);
 	}
-
-	private IEnumerable<Field> GetAdjacentFields(Field[,] fields, int x, int y)
+	
+	private static IEnumerable<Field> GetAdjacentFields(Field[,] fields, int x, int y)
 	{
 		var adjacent = new List<Field>();
 		
@@ -115,10 +114,4 @@ public class FieldGenerator
 
 		return adjacent;
 	}
-
-	private int CountAdjacent(Field[,] fields, int x, int y)
-	{
-		return GetAdjacentFields(fields, x, y).Count(field => field.GetFieldType() == Field.FieldType.Mine);
-	}
-	
 }
