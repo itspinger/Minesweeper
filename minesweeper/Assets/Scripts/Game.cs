@@ -96,7 +96,6 @@ public class Game : MonoBehaviour
             return;
         }
 
-        
         if (field.GetAdjacentMines() != 0)
         {
             field.SetState(Field.FieldState.Revealed);
@@ -105,6 +104,8 @@ public class Game : MonoBehaviour
             // Check the winning condition
             return;
         }
+        
+        // Check win condition
 
         FloodFill(field);
         _tileManager.UpdateFields(_fields);

@@ -17,8 +17,10 @@ public static class FieldGenerator
 				tileManager.UpdateField(fields[i, j]);
 			}
 		}
+
+		tileManager.UpdateFields(fields);
 	}
-	
+
 	public static void CreateMines(Field[,] fields, int mines, Field exception)
 	{
 		var width = fields.GetLength(0);
