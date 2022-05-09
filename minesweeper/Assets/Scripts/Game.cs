@@ -28,11 +28,11 @@ public class Game : MonoBehaviour
     public void Start()
     {
         // Load all the necessary game data
-        _width = 9;
-        _height = 9;
+        _width = 8;
+        _height = 8;
         _mines = 10;
         
-        Camera.main.transform.position = new Vector3(_width / 2, _height / 2f, -10);
+        Camera.main.transform.position = new Vector3(_width / 2f, _height / 2f, -10);
         Camera.main.orthographicSize = Math.Max(_height, _width) / 2f * 1.43f;
 
         _fields = new Field[_width, _height];
@@ -70,6 +70,8 @@ public class Game : MonoBehaviour
         var field = GetFieldFromMouse();
 
         // This means that the field is invalid
+        // Which basically means that it is outside of the scope
+        // Of the Grid
         if (field == null)
             return;
 
