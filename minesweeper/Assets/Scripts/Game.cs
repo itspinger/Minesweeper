@@ -1,11 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using TMPro;
 using Debug = UnityEngine.Debug;
 
 public class Game : MonoBehaviour
 {
+    // The general settings of the game 
     private int _height;
     private int _width;
     private int _mines;
@@ -18,6 +21,7 @@ public class Game : MonoBehaviour
     
     // The time the game has started
     private readonly Stopwatch _stopwatch = new Stopwatch();
+    public TMP_Text timer;
 
     private void Awake()
     {
@@ -27,20 +31,31 @@ public class Game : MonoBehaviour
 
     public void Start()
     {
+        // Start the timer
+        _stopwatch.Start();
+
         // Load all the necessary game data
-        _width = 8;
-        _height = 8;
+        _width = 9;
+        _height = 9;
         _mines = 10;
         
-        Camera.main.transform.position = new Vector3(_width / 2f, _height / 2f, -10);
-        Camera.main.orthographicSize = Math.Max(_height, _width) / 2f * 1.43f;
+        // The calls below transform the main camera
+        // So that no matter the size of the game
+        // The table will be centered
+        Camera.main.transform.position = new Vector3(_width / 8f, _height / 8f, -10);
+        Camera.main.orthographicSize = Math.Max(_height, _width) / 4f * 1.43f;
 
+        // 
         _fields = new Field[_width, _height];
         FieldGenerator.CreateDefaultFieldTable(_fields, _tileManager);
     }
 
     public void Update()
     {
+        // Set the text
+        timer.SetText(Math.Round(_stopwatch.Elapsed.TotalSeconds, 1).ToString());
+        _tileManager.UpdateFields(_fields);
+
         if (Input.GetMouseButtonDown(1))
         {
             HandleRightClick();
@@ -88,13 +103,19 @@ public class Game : MonoBehaviour
             _clicked = true;
         }
 
+        // Check if the game already ended
+        if (_gameOver)
+        {
+            return;
+        }
+
         // This event has already been called for this field
         if (field.GetState() == Field.FieldState.Flagged || field.GetState() == Field.FieldState.Revealed)
             return;
 
         if (field.IsMine())
         {
-            EndGame(field);
+            StartCoroutine(EndGame(field));
             return;
         }
 
@@ -108,29 +129,30 @@ public class Game : MonoBehaviour
         }
         
         // Check win condition
-
-        FloodFill(field);
+        StartCoroutine(FloodFill(field));
         _tileManager.UpdateFields(_fields);
     }
 
-    private void FloodFill(Field field)
+    private IEnumerator FloodFill(Field field)
     {
         if (field.GetState() == Field.FieldState.Revealed)
-            return;
+            yield break;
 
         if (field.IsMine())
-            return;
+            yield break;
 
         field.SetState(Field.FieldState.Revealed);
         var pos = field.GetPosition();
         
         // Check if field has 0 adjacent; if so, flood again to 4 corners
         if (field.GetAdjacentMines() != 0)
-            return;
+            yield break;
+
+        yield return new WaitForEndOfFrame();
 
         foreach (var adjacentField in GetAdjacentFields(field))
         {
-            FloodFill(adjacentField);
+            StartCoroutine(FloodFill(adjacentField));
         }
     }
 
@@ -162,11 +184,11 @@ public class Game : MonoBehaviour
         return adjacent;
     }
 
-    private void EndGame(Field field)
+    private IEnumerator EndGame(Field field)
     {
         if (!field.IsMine())
         {
-            return;
+            yield break;
         }
         
         Debug.Log("Game has finished");
@@ -179,7 +201,13 @@ public class Game : MonoBehaviour
         // Reveal all others
         foreach (var f in _fields)
         {
-            f.SetState(Field.FieldState.Revealed);
+            if (f.GetFieldType() == Field.FieldType.Mine)
+            {
+                f.SetState(Field.FieldState.Revealed);
+
+                // Wait for this
+                yield return new WaitForSeconds(0.15f);
+            }
         }
         
         _tileManager.UpdateFields(_fields);
@@ -192,7 +220,13 @@ public class Game : MonoBehaviour
         // This means that the field is invalid
         if (field == null)
             return;
-        
+
+        // Check if the game already ended
+        if (_gameOver)
+        {
+            return;
+        }
+
         // These states are not updated within the right click
         if (field.GetState() == Field.FieldState.Revealed || field.GetState() == Field.FieldState.Unknown)
             return;

@@ -59,7 +59,7 @@ public class TileManager : MonoBehaviour
 			return GetTile(field.GetAdjacentMines());
 		}
 
-		return field.HasExploded() ? GetTile("ExplodedMine") : GetTile("Mine");
+		return GetTile("Mine");
 	}
 	
 	/**
