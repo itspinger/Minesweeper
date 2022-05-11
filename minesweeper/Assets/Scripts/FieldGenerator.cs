@@ -7,6 +7,11 @@ using Random = UnityEngine.Random;
 public static class FieldGenerator
 {
 
+	/**
+	 * This method creates a default field table with the provided 
+	 * instance for easier controlling of the field sprites.
+	 */ 
+
 	public static void CreateDefaultFieldTable(Field[,] fields, TileManager tileManager)
 	{
 		for (var i = 0; i < fields.GetLength(0); i++)
@@ -21,16 +26,25 @@ public static class FieldGenerator
 		tileManager.UpdateFields(fields);
 	}
 
+	/**
+	 * This method is used to generate a definite amount of mines withi the 
+	 * fields matrix and creating an exception for a specific field which is the first
+	 * field that the player clicks. 
+	 */
+
 	public static void CreateMines(Field[,] fields, int mines, Field exception)
 	{
 		var width = fields.GetLength(0);
 		var height = fields.GetLength(1);
 
+		// Loop through the number of mines needed
 		for (var i = 0; i < mines; i++)
 		{
 			var m = Random.Range(0, width);
 			var n = Random.Range(0, height);
 
+			// Check if the field 
+			// Can be set to a mine
 			while (IsInvalid(fields, exception, m, n))
 			{
 				m++;
@@ -47,10 +61,51 @@ public static class FieldGenerator
 				}
 			}
 			
+			// Set the type to a mine
 			fields[m, n].SetType(Field.FieldType.Mine);
 		}
 	}
-	
+
+	/**
+	 * This method checks if a position of a field is valid for it to be changed to a mine.
+	 * <p>
+	 * The specified field is an exception, so every field adjacent to it is also an exception
+	 * and cannot be set to a mine.
+	 */
+ 
+	private static bool IsInvalid(Field[,] fields, Field exception, int x, int y)
+	{
+		var pos = exception.GetPosition();
+
+		// Check if it's the same field
+		if (pos.x == x && pos.y == y)
+		{
+			return true;
+		}
+
+		// Loop through each adjacent field
+		// And check if the position
+		// Is equal to the adjacent field
+		var adjacentFields = GetAdjacentFields(fields, pos.x, pos.y);
+		foreach (var v in adjacentFields)
+		{
+			pos = v.GetPosition();
+
+			// Check if it's the same position
+			// If so it is invalid
+			if (pos.x == x && pos.y == y)
+			{
+				return true;
+			}
+		}
+
+		return fields[x, y].IsMine();
+	}
+
+	/**
+	 * 
+	 */
+
 	public static void CountAdjacentMines(Field[,] fields)
 	{
 		for (var i = 0; i < fields.GetLength(0); i++)
@@ -67,31 +122,6 @@ public static class FieldGenerator
 				fields[i, j].SetAdjacentMines(count);
 			}
 		}
-	}
-
-	private static bool IsInvalid(Field[,] fields, Field exception, int x, int y)
-	{
-		var pos = exception.GetPosition();
-		
-		// Check if it's the same field
-		if (pos.x == x && pos.y == y)
-		{
-			return true;
-		}
-		
-		var adjacentFields = GetAdjacentFields(fields, pos.x, pos.y);
-		foreach (var v in adjacentFields)
-		{
-			pos = v.GetPosition();
-			
-			// Check if it's the same position
-			if (pos.x == x && pos.y == y)
-			{
-				return true;
-			}
-		}
-		
-		return fields[x, y].IsMine();
 	}
 
 	private static int CountAdjacent(Field[,] fields, int x, int y)
