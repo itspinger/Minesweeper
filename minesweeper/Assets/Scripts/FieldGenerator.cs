@@ -8,31 +8,12 @@ public static class FieldGenerator
 {
 
 	/**
-	 * This method creates a default field table with the provided 
-	 * instance for easier controlling of the field sprites.
-	 */ 
-
-	public static void CreateDefaultFieldTable(Field[,] fields, TileManager tileManager)
-	{
-		for (var i = 0; i < fields.GetLength(0); i++)
-		{
-			for (var j = 0; j < fields.GetLength(1); j++)
-			{
-				fields[i, j] = new Field(new Vector3Int(i, j, 0));
-				tileManager.UpdateField(fields[i, j]);
-			}
-		}
-
-		tileManager.UpdateFields(fields);
-	}
-
-	/**
 	 * This method is used to generate a definite amount of mines withi the 
 	 * fields matrix and creating an exception for a specific field which is the first
 	 * field that the player clicks. 
 	 */
 
-	public static void CreateMines(Field[,] fields, int mines, Field exception)
+	public static void CreateMines(BetterField[,] fields, int mines, BetterField exception)
 	{
 		var width = fields.GetLength(0);
 		var height = fields.GetLength(1);
@@ -62,7 +43,7 @@ public static class FieldGenerator
 			}
 			
 			// Set the type to a mine
-			fields[m, n].SetType(Field.FieldType.Mine);
+			fields[m, n].SetType(BetterField.FieldType.Mine);
 		}
 	}
 
@@ -73,7 +54,7 @@ public static class FieldGenerator
 	 * and cannot be set to a mine.
 	 */
  
-	private static bool IsInvalid(Field[,] fields, Field exception, int x, int y)
+	private static bool IsInvalid(BetterField[,] fields, BetterField exception, int x, int y)
 	{
 		var pos = exception.GetPosition();
 
@@ -106,7 +87,7 @@ public static class FieldGenerator
 	 * 
 	 */
 
-	public static void CountAdjacentMines(Field[,] fields)
+	public static void CountAdjacentMines(BetterField[,] fields)
 	{
 		for (var i = 0; i < fields.GetLength(0); i++)
 		{
@@ -115,7 +96,7 @@ public static class FieldGenerator
 				var field = fields[i, j];
 				
 				// Check if it's a mine
-				if (field.GetFieldType() == Field.FieldType.Mine)
+				if (field.GetFieldType() == BetterField.FieldType.Mine)
 					continue;
 
 				var count = CountAdjacent(fields, i, j);
@@ -124,14 +105,14 @@ public static class FieldGenerator
 		}
 	}
 
-	private static int CountAdjacent(Field[,] fields, int x, int y)
+	private static int CountAdjacent(BetterField[,] fields, int x, int y)
 	{
-		return GetAdjacentFields(fields, x, y).Count(field => field.GetFieldType() == Field.FieldType.Mine);
+		return GetAdjacentFields(fields, x, y).Count(field => field.GetFieldType() == BetterField.FieldType.Mine);
 	}
 	
-	private static IEnumerable<Field> GetAdjacentFields(Field[,] fields, int x, int y)
+	private static IEnumerable<BetterField> GetAdjacentFields(BetterField[,] fields, int x, int y)
 	{
-		var adjacent = new List<Field>();
+		var adjacent = new List<BetterField>();
 		
 		var width = fields.GetLength(0);
 		var height = fields.GetLength(1);

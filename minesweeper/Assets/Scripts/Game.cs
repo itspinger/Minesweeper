@@ -47,7 +47,7 @@ public class Game : MonoBehaviour
 
         // 
         _fields = new Field[_width, _height];
-        FieldGenerator.CreateDefaultFieldTable(_fields, _tileManager);
+        // FieldGenerator.CreateDefaultFieldTable(_fields, _tileManager);
     }
 
     public void Update()
@@ -95,8 +95,8 @@ public class Game : MonoBehaviour
             // We generate mines after first click
             // Because we don't want the chance of the player
             // Losing within the first click
-            FieldGenerator.CreateMines(_fields, _mines, field);
-            FieldGenerator.CountAdjacentMines(_fields);
+            //FieldGenerator.CreateMines(_fields, _mines, field);
+            //FieldGenerator.CountAdjacentMines(_fields);
             _tileManager.UpdateFields(_fields);
 
             // Update the click

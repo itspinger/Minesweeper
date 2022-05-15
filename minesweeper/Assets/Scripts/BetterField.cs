@@ -9,6 +9,7 @@ public class BetterField : MonoBehaviour
 	private int _adjacentMines;
 	private bool _exploded;
 	private bool odd;
+	private Vector2Int position;
 
 	/**
 	 * This method checks whether this field
@@ -92,6 +93,11 @@ public class BetterField : MonoBehaviour
 		return _exploded;
 	}
 
+	/**
+	 * This method returns the amount of mines adjacent
+	 * to this field
+	 */
+
 	public int GetAdjacentMines()
 	{
 		return _adjacentMines;
@@ -109,6 +115,11 @@ public class BetterField : MonoBehaviour
 		return _type;
 	}
 
+	public void setPosition(Vector2Int position)
+    {
+		this.position = position;
+    }
+
 	/*
 	 * This method returns the state of this field.
 	 */
@@ -117,6 +128,15 @@ public class BetterField : MonoBehaviour
 	{
 		return _state;
 	}
+
+	/**
+	 * This method returns the vector position of this field.
+	 */
+
+	public Vector2Int GetPosition()
+    {
+		return this.position;
+    }
 
 	/**
 	 * This enum is used to represent the field type.

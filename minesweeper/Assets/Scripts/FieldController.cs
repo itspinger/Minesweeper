@@ -7,20 +7,15 @@ using TMPro;
 public class FieldController : MonoBehaviour
 {
     private BetterField field;
-    private ColorBlock background;
 
     // Controller objects
     public TMP_Text adjacentText;
     public Button fieldButton;
 
-
     private void Awake()
     {
         // Get the field from the game object
         field = GetComponent<BetterField>();
-
-        // Get the image from the button
-        background = fieldButton.colors;
     }
 
     private void Update()
@@ -39,7 +34,8 @@ public class FieldController : MonoBehaviour
         // Then the color should be (170, 215, 81, 255)
         if (field.IsOdd() && field.GetState() != BetterField.FieldState.Revealed)
         {
-            background.normalColor = new Color32(170, 215, 81, 255);
+
+            ApplyNormalColor(new Color32(170, 215, 81, 255));
             return;
         }
 
@@ -47,7 +43,7 @@ public class FieldController : MonoBehaviour
         // Then the color should be (162, 209, 73, 255)
         if (!field.IsOdd() && field.GetState() != BetterField.FieldState.Revealed)
         {
-            background.normalColor = new Color32(162, 209, 73, 255);
+            ApplyNormalColor(new Color32(162, 209, 73, 255));
             return;
         }
 
@@ -56,16 +52,25 @@ public class FieldController : MonoBehaviour
         // And get the revealed color depending on it
         if (field.IsOdd())
         {
-            background.normalColor = new Color32(229, 194, 159, 255);
+            ApplyNormalColor(new Color32(229, 194, 159, 255));
             return;
         }
 
-        background.normalColor = new Color32(215, 184, 153, 255);
+        ApplyNormalColor(new Color32(215, 184, 153, 255));
     }
 
-    public void OnClick()
+    public void ApplyNormalColor(Color32 color)
     {
-        Debug.Log("im gay");
+        ColorBlock block = fieldButton.colors;
+
+        // Set the color
+        block.normalColor = color;
+        //block.pressedColor = color;
+        //block.selectedColor = color;
+        //block.disabledColor = color;
+
+        // Assign the fieldButton struct
+        fieldButton.colors = block;
     }
 
     public class FieldText

@@ -87,8 +87,22 @@ public class BetterGame : MonoBehaviour
                 // Add its script to the fields
                 // And set the parity
                 fields[i, j] = field.GetComponent<BetterField>();
+                fields[i, j].setPosition(new Vector2Int(i, j));
                 fields[i, j].setOdd((i + j) % 2 == 0);
             }
+        }
+    }
+
+    public void HandleLeftClick(BetterField field)
+    {
+        if (_started)
+        {
+            // Start the game if it hasn't started already
+            FieldGenerator.CreateMines(fields, mines, field);
+            FieldGenerator.CountAdjacentMines(fields);
+
+            // Update each field
+            return;
         }
     }
 }
