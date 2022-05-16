@@ -11,13 +11,24 @@ public class BetterField : MonoBehaviour
 	private bool odd;
 	private Vector2Int position;
 
+	public FieldController controller;
 	public ClickableButton clickableButton;
 
     private void Awake()
     {
+		// Get the controller from the gameObject
+		controller = GetComponent<FieldController>();
+
 		// Attaches the left click listener
 		// To the game manager
 		clickableButton.OnLeftClick.AddListener(() => BetterGame.instance.HandleLeftClick(this));
+    }
+
+	public void Reveal()
+    {
+		// Reveal the field
+		controller.Reveal();
+		SetState(BetterField.FieldState.Revealed);
     }
 
 	public void HandleRightClick()

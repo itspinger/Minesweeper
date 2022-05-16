@@ -122,8 +122,6 @@ public class BetterGame : MonoBehaviour
             return;
         }
 
-        Debug.Log("here");
-
         if (field.GetAdjacentMines() != 0)
         {
             field.SetState(BetterField.FieldState.Revealed);

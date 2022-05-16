@@ -3,26 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class FieldController : MonoBehaviour
 {
     private BetterField field;
+    private FieldTextContext textContext;
 
     // Controller objects
     public TMP_Text adjacentText;
     public Button fieldButton;
     public Image flagImage;
+    public Image mineImage;
+    public Image xImage;
 
     private void Awake()
     {
         // Get the field from the game object
         field = GetComponent<BetterField>();
+
+        // Update the components
+        this.textContext = new FieldTextContext(this);
     }
 
     private void Update()
     {
         ApplyBackground();
-        FieldText.Apply(this);
+        textContext.Apply();
         ApplyFlag();
     }
 
@@ -59,6 +66,11 @@ public class FieldController : MonoBehaviour
         ApplyNormalColor(new Color32(215, 184, 153, 255));
     }
 
+    internal void Reveal()
+    {
+        
+    }
+
     public void ApplyFlag()
     {
         // Make sure it is not revealed
@@ -88,88 +100,4 @@ public class FieldController : MonoBehaviour
         // Assign the fieldButton struct
         fieldButton.colors = block;
     }
-
-    public class FieldText
-    {
-        private static readonly List<FieldText> fields = new List<FieldText>();
-
-        static FieldText()
-        {
-            // Color for number 1
-            new FieldText(new Color32(25, 118, 210, 255));
-
-            // Color for number 2
-            new FieldText(new Color32(56, 142, 60, 255));
-
-            // Color for number 3
-            new FieldText(new Color32(211, 48, 48, 255));
-
-            // Color for number 4
-            new FieldText(new Color32(123, 31, 162, 255));
-
-            // Color for number 5
-            new FieldText(new Color32(123, 31, 162, 255));
-
-            // Color for number 6
-            new FieldText(new Color32(123, 31, 162, 255));
-
-            // Color for number 7
-            new FieldText(new Color32(123, 31, 162, 255));
-
-            // Color for number 8
-            new FieldText(new Color32(123, 31, 162, 255));
-        }
-
-        private readonly Color32 color;
-
-        public FieldText(Color32 color)
-        {
-            this.color = color;
-
-            // Add to the fields
-            fields.Add(this);
-        }
-
-        /**
-         * This method returns the color
-         * of this field text;
-         */
-
-        public Color32 GetColor()
-        {
-            return color;
-        }
-
-        public static void Apply(FieldController controller)
-        {
-            if (controller.GetField().IsMine() || controller.GetField().GetState() != BetterField.FieldState.Revealed)
-                return;
-
-            // Get the number of adjacent mines
-            // From this field
-            int mines = controller.GetField().GetAdjacentMines();
-
-            // Edge case
-            // In case the adjacent amount is 0
-            if (controller.GetField().GetAdjacentMines() == 0)
-            {
-                return;
-            }
-
-            // Get the correct color
-            FieldText text = fields[mines - 1];
-
-            // Safe check
-            // In case the color is null
-            if (text == null)
-            {
-                return;
-            }
-
-            controller.adjacentText.text = mines.ToString();
-            controller.adjacentText.color = text.GetColor();
-        }
-    }
-
-
 }
