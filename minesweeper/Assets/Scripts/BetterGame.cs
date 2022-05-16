@@ -12,8 +12,8 @@ public class BetterGame : MonoBehaviour
     public RectTransform fieldTranfsorm;
 
     // Game Settings
-    private int rows = 10;
-    private int columns = 10;
+    private int rows = 8;
+    private int columns = 8;
     private int mines = 10;
 
     private bool _started, _finished;
@@ -95,14 +95,124 @@ public class BetterGame : MonoBehaviour
 
     public void HandleLeftClick(BetterField field)
     {
-        if (_started)
+        if (!_started)
         {
             // Start the game if it hasn't started already
             FieldGenerator.CreateMines(fields, mines, field);
             FieldGenerator.CountAdjacentMines(fields);
 
             // Update each field
+            _started = true;
+        }
+
+        if (_finished)
+        {
             return;
         }
+
+        // Check the state of the field
+        if (field.GetState() == BetterField.FieldState.Flagged || field.GetState() == BetterField.FieldState.Revealed)
+            return;
+
+        // Check if the field is a mine
+        // If it is, end the game
+        if (field.IsMine())
+        {
+            StartCoroutine(EndGame(field));
+            return;
+        }
+
+        Debug.Log("here");
+
+        if (field.GetAdjacentMines() != 0)
+        {
+            field.SetState(BetterField.FieldState.Revealed);
+
+            // Check for winning condition here
+
+            return;
+        }
+
+        StartCoroutine(FloodFill(field));
+        // Check win condition
+    }
+
+    public IEnumerator EndGame(BetterField field)
+    {
+        if (!field.IsMine())
+        {
+            yield break;
+        }
+
+        Debug.Log("Game has finished");
+        _finished = true;
+
+        // Revealed state
+        field.SetState(BetterField.FieldState.Revealed);
+        field.SetExploded(true);
+
+        // Reveal all others
+        foreach (var f in fields)
+        {
+            if (f.GetFieldType() == BetterField.FieldType.Mine)
+            {
+                f.SetState(BetterField.FieldState.Revealed);
+
+                // Wait for this
+                yield return new WaitForSeconds(0.15f);
+            }
+        }
+
+    }
+
+    private IEnumerator FloodFill(BetterField field)
+    {
+        if (field.GetState() == BetterField.FieldState.Revealed)
+            yield break;
+
+        if (field.IsMine())
+            yield break;
+
+        field.SetState(BetterField.FieldState.Revealed);
+        var pos = field.GetPosition();
+
+        // Check if field has 0 adjacent; if so, flood again to 4 corners
+        if (field.GetAdjacentMines() != 0)
+            yield break;
+
+        yield return new WaitForEndOfFrame();
+
+        foreach (var adjacentField in GetAdjacentFields(field))
+        {
+            StartCoroutine(FloodFill(adjacentField));
+        }
+    }
+
+    private IEnumerable<BetterField> GetAdjacentFields(BetterField field)
+    {
+        var adjacent = new List<BetterField>();
+        var pos = field.GetPosition();
+
+        if (pos.x + 1 < rows)
+        {
+            adjacent.Add(fields[pos.x + 1, pos.y]);
+        }
+
+        if (pos.x - 1 >= 0)
+        {
+            adjacent.Add(fields[pos.x - 1, pos.y]);
+        }
+
+        if (pos.y + 1 < columns)
+        {
+            adjacent.Add(fields[pos.x, pos.y + 1]);
+        }
+
+        if (pos.y - 1 >= 0)
+        {
+            adjacent.Add(fields[pos.x, pos.y - 1]);
+        }
+
+        return adjacent;
     }
 }

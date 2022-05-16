@@ -4,12 +4,29 @@ using UnityEngine;
 public class BetterField : MonoBehaviour
 {
 	private FieldType _type = FieldType.Default;
-	private FieldState _state = FieldState.Revealed;
+	private FieldState _state = FieldState.Hidden;
 
 	private int _adjacentMines;
 	private bool _exploded;
 	private bool odd;
 	private Vector2Int position;
+
+	public ClickableButton clickableButton;
+
+    private void Awake()
+    {
+		// Attaches the left click listener
+		// To the game manager
+		clickableButton.OnLeftClick.AddListener(() => BetterGame.instance.HandleLeftClick(this));
+    }
+
+	public void HandleRightClick()
+	{
+		if (GetState() == FieldState.Revealed)
+			return;
+
+		SetState(GetState() == BetterField.FieldState.Flagged ? BetterField.FieldState.Hidden : BetterField.FieldState.Flagged);
+	}
 
 	/**
 	 * This method checks whether this field

@@ -18,15 +18,15 @@ public class Field
 	private int _adjacentMines;
 	private bool _exploded;
 
-	public Field(Vector3Int position)
-	{
-		_position = position;
-	}
-
 	/*
 	 * This method returns whether this field
 	 * is a mine.
 	 */
+
+	public Field(Vector2Int position)
+    {
+		// 
+    }
 	
 	public bool IsMine()
 	{

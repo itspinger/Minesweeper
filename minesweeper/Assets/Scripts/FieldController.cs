@@ -11,6 +11,7 @@ public class FieldController : MonoBehaviour
     // Controller objects
     public TMP_Text adjacentText;
     public Button fieldButton;
+    public Image flagImage;
 
     private void Awake()
     {
@@ -21,6 +22,8 @@ public class FieldController : MonoBehaviour
     private void Update()
     {
         ApplyBackground();
+        FieldText.Apply(this);
+        ApplyFlag();
     }
 
     public BetterField GetField()
@@ -47,9 +50,6 @@ public class FieldController : MonoBehaviour
             return;
         }
 
-        // This means that the field is revealed
-        // Check if the field is odd
-        // And get the revealed color depending on it
         if (field.IsOdd())
         {
             ApplyNormalColor(new Color32(229, 194, 159, 255));
@@ -59,15 +59,31 @@ public class FieldController : MonoBehaviour
         ApplyNormalColor(new Color32(215, 184, 153, 255));
     }
 
+    public void ApplyFlag()
+    {
+        // Make sure it is not revealed
+        if (field.GetState() == BetterField.FieldState.Revealed)
+            return;
+
+        // Check for flag
+        if (field.GetState() == BetterField.FieldState.Flagged)
+        {
+            flagImage.gameObject.SetActive(true);
+            return;
+        }
+
+        flagImage.gameObject.SetActive(false);
+    }
+
     public void ApplyNormalColor(Color32 color)
     {
         ColorBlock block = fieldButton.colors;
 
         // Set the color
         block.normalColor = color;
-        //block.pressedColor = color;
-        //block.selectedColor = color;
-        //block.disabledColor = color;
+        block.pressedColor = color;
+        block.selectedColor = color;
+        block.disabledColor = color;
 
         // Assign the fieldButton struct
         fieldButton.colors = block;
@@ -126,6 +142,9 @@ public class FieldController : MonoBehaviour
 
         public static void Apply(FieldController controller)
         {
+            if (controller.GetField().IsMine() || controller.GetField().GetState() != BetterField.FieldState.Revealed)
+                return;
+
             // Get the number of adjacent mines
             // From this field
             int mines = controller.GetField().GetAdjacentMines();
@@ -151,4 +170,6 @@ public class FieldController : MonoBehaviour
             controller.adjacentText.color = text.GetColor();
         }
     }
+
+
 }
