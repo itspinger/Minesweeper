@@ -19,7 +19,6 @@ public class FieldBackgroundContext : FieldContext
         // Then the color should be (170, 215, 81, 255)
         if (field.IsOdd() && field.GetState() != BetterField.FieldState.Revealed)
         {
-
             ApplyNormalColor(new Color32(170, 215, 81, 255));
             return;
         }

@@ -27,8 +27,8 @@ public class BetterField : MonoBehaviour
 	public void Reveal()
     {
 		// Reveal the field
-		controller.Reveal();
 		SetState(BetterField.FieldState.Revealed);
+		controller.Reveal();
     }
 
 	public void HandleRightClick()
