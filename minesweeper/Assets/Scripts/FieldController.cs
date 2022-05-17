@@ -7,7 +7,7 @@ using System;
 
 public class FieldController : MonoBehaviour
 {
-    private BetterField field;
+    private Field field;
     private FieldTextContext textContext;
     private FieldBackgroundContext backgroundContext;
     private FieldImageContext imageContext;
@@ -22,7 +22,7 @@ public class FieldController : MonoBehaviour
     private void Awake()
     {
         // Get the field from the game object
-        field = GetComponent<BetterField>();
+        field = GetComponent<Field>();
 
         // Update the components
         this.textContext = new FieldTextContext(this);
@@ -36,7 +36,7 @@ public class FieldController : MonoBehaviour
         backgroundContext.Apply();
     }
 
-    public BetterField GetField()
+    public Field GetField()
     {
         return field;
     }

@@ -18,7 +18,7 @@ public class BetterScreenSizer : MonoBehaviour
     private void Start()
     {
         lastResolution = new Vector2Int(Screen.width, Screen.height);
-        BetterGame.instance.OnInit += ForceResize;
+        Game.instance.OnInit += ForceResize;
     }
 
     public void ForceResize()

@@ -11,10 +11,10 @@ public class FieldImageContext : FieldContext
     public override void Apply()
     {
         // Get the field from the controller
-        BetterField field = controller.GetField();
+        Field field = controller.GetField();
 
         // Check if the field has been flagged
-        if (field.GetState() == BetterField.FieldState.Flagged)
+        if (field.GetState() == Field.FieldState.Flagged)
         {
             controller.flagImage.gameObject.SetActive(true);
             return;
@@ -23,7 +23,7 @@ public class FieldImageContext : FieldContext
         // If it's hidden
         // Make sure to disable the flag image
         // Because it may be enabled from the previous click
-        if (field.GetState() == BetterField.FieldState.Hidden)
+        if (field.GetState() == Field.FieldState.Hidden)
         {
             controller.flagImage.gameObject.SetActive(false);
             return;

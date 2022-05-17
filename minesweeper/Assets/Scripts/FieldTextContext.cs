@@ -19,7 +19,7 @@ public class FieldTextContext : FieldContext
     public override void Apply()
     {
         // Get the field instance itself
-        BetterField field = controller.GetField();
+        Field field = controller.GetField();
 
         // Get the number of adjacent mines
         int mines = field.GetAdjacentMines();

@@ -44,12 +44,12 @@ public class TimerManager : MonoBehaviour
     }
 
     /**
-     * This method stops the current timer.
+     * This method restarts the current timer.
      */
 
     public void StopTimer()
     {
-        timer.Stop();
+        timer.Restart();
     }
 
     /**

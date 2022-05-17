@@ -13,14 +13,14 @@ public class FieldBackgroundContext : FieldContext
     public override void Apply()
     {
         // Get the field from the controller
-        BetterField field = controller.GetField();
+        Field field = controller.GetField();
 
         // Initialize the highlighted color
         Color32 color = new Color32(193, 214, 152, 255);
 
         // Check if the field is odd and if the field is not revealed
         // Then the color should be (170, 215, 81, 255)
-        if (field.IsOdd() && field.GetState() != BetterField.FieldState.Revealed)
+        if (field.IsOdd() && field.GetState() != Field.FieldState.Revealed)
         {
             ApplyNormalColor(new Color32(170, 215, 81, 255), color);
             return;
@@ -28,7 +28,7 @@ public class FieldBackgroundContext : FieldContext
 
         // Check if the field is not odd and if the field is not revealed
         // Then the color should be (162, 209, 73, 255)
-        if (!field.IsOdd() && field.GetState() != BetterField.FieldState.Revealed)
+        if (!field.IsOdd() && field.GetState() != Field.FieldState.Revealed)
         {
             ApplyNormalColor(new Color32(162, 209, 73, 255), color);
             return;

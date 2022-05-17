@@ -1,118 +1,124 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
-using TMPro;
-using Debug = UnityEngine.Debug;
+using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
-    // The general settings of the game 
-    private int _height;
-    private int _width;
-    private int _mines;
-    
-    private Field[,] _fields;
-    private TileManager _tileManager;
+    public static Game instance;
 
-    private bool _clicked = false;
-    private bool _gameOver = false;
-    
-    // The time the game has started
-    private readonly Stopwatch _stopwatch = new Stopwatch();
-    public TMP_Text timer;
+    // The field prefab
+    public GameObject fieldPrefab;
+    public RectTransform fieldTranfsorm;
+
+    // Game Settings
+    private int rows = 8;
+    private int columns = 8;
+    private int mines = 10;
+
+    private bool _started, _finished;
+    private Field[,] fields;
+
+    public event System.Action OnInit;
 
     private void Awake()
     {
-        _tileManager = GetComponentInChildren<TileManager>();
         Application.targetFrameRate = 60;
-    }
 
-    public void Start()
-    {
-        // Start the timer
-        _stopwatch.Start();
-
-        // Load all the necessary game data
-        _width = 9;
-        _height = 9;
-        _mines = 10;
-        
-        // The calls below transform the main camera
-        // So that no matter the size of the game
-        // The table will be centered
-        Camera.main.transform.position = new Vector3(_width / 8f, _height / 8f, -10);
-        Camera.main.orthographicSize = Math.Max(_height, _width) / 4f * 1.43f;
-
-        // 
-        _fields = new Field[_width, _height];
-        // FieldGenerator.CreateDefaultFieldTable(_fields, _tileManager);
-    }
-
-    public void Update()
-    {
-        // Set the text
-        timer.SetText(Math.Round(_stopwatch.Elapsed.TotalSeconds, 1).ToString());
-        _tileManager.UpdateFields(_fields);
-
-        if (Input.GetMouseButtonDown(1))
+        // Check for instance
+        if (instance == null)
         {
-            HandleRightClick();
+            instance = this; 
+        } else  
+        {
+            Destroy(this.gameObject);
         }
 
-        if (Input.GetMouseButtonDown(0))
+        fields = new Field[rows, columns];
+    }
+
+    private void Start()
+    {
+        // Initialize the stuff
+        StartCoroutine(CreateGame());
+    }
+
+    private IEnumerator CreateGame()
+    {
+        // Just delay the start a second
+        yield return new WaitForEndOfFrame();
+
+        // Now initalize the important stuff
+        InitField();
+
+        // Check for resize
+        if (OnInit != null)
         {
-            HandleLeftClick();
+            OnInit();
         }
     }
 
-    private Field GetFieldFromMouse()
+    private void InitField()
     {
-        var world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        var mouse = _tileManager.GetTilemap().WorldToCell(world);
-
-        if (mouse.x < 0 || mouse.x >= _width || mouse.y < 0 || mouse.y >= _height)
+        foreach (var field in fields)
         {
-            return null;
+            if (field == null)
+                continue;
+
+            Destroy(field.gameObject);
         }
 
-        return _fields[mouse.x, mouse.y];
+        // Initialize the fields again
+        fields = new Field[rows, columns];
+
+        // Get the grid
+        // In order to fill out the game
+        GridLayoutGroup grid = fieldTranfsorm.GetComponent<GridLayoutGroup>();
+        fieldTranfsorm.sizeDelta = new Vector2(rows * grid.cellSize.x, columns * grid.cellSize.y);
+
+        // Create new fields
+        // For the game
+        for (var i = 0; i < rows; i++)
+        {
+            for (var j = 0; j < columns; j++)
+            {
+                GameObject field = Instantiate(fieldPrefab, fieldTranfsorm);
+
+                // Add its script to the fields
+                // And set the parity
+                fields[i, j] = field.GetComponent<Field>();
+                fields[i, j].setPosition(new Vector2Int(i, j));
+                fields[i, j].setOdd((i + j) % 2 == 0);
+            }
+        }
     }
 
-    private void HandleLeftClick()
+    public void HandleLeftClick(Field field)
     {
-        var field = GetFieldFromMouse();
+        if (!_started)
+        {
+            // Start the game if it hasn't started already
+            FieldGenerator.CreateMines(fields, mines, field);
+            FieldGenerator.CountAdjacentMines(fields);
 
-        // This means that the field is invalid
-        // Which basically means that it is outside of the scope
-        // Of the Grid
-        if (field == null)
+            // Update each field
+            _started = true;
+
+            // Start the timer
+            TimerManager.GetInstance().StartTimer();
+        }
+
+        if (_finished)
+        {
             return;
-
-        if (!_clicked)
-        {
-            // We generate mines after first click
-            // Because we don't want the chance of the player
-            // Losing within the first click
-            //FieldGenerator.CreateMines(_fields, _mines, field);
-            //FieldGenerator.CountAdjacentMines(_fields);
-            _tileManager.UpdateFields(_fields);
-
-            // Update the click
-            _clicked = true;
         }
 
-        // Check if the game already ended
-        if (_gameOver)
-        {
-            return;
-        }
-
-        // This event has already been called for this field
+        // Check the state of the field
         if (field.GetState() == Field.FieldState.Flagged || field.GetState() == Field.FieldState.Revealed)
             return;
 
+        // Check if the field is a mine
+        // If it is, end the game
         if (field.IsMine())
         {
             StartCoroutine(EndGame(field));
@@ -121,16 +127,45 @@ public class Game : MonoBehaviour
 
         if (field.GetAdjacentMines() != 0)
         {
-            field.SetState(Field.FieldState.Revealed);
-            _tileManager.UpdateField(field);
-            
-            // Check the winning condition
+            field.Reveal();
+
+            // Check for winning condition here
             return;
         }
-        
-        // Check win condition
+
         StartCoroutine(FloodFill(field));
-        _tileManager.UpdateFields(_fields);
+        // Check win condition
+    }
+
+    public IEnumerator EndGame(Field field)
+    {
+        if (!field.IsMine())
+        {
+            yield break;
+        }
+
+        Debug.Log("Game has finished");
+        _finished = true;
+
+        // Revealed state
+        field.SetState(Field.FieldState.Revealed);
+        field.SetExploded(true);
+
+        // Stop the timer
+        TimerManager.GetInstance().StopTimer();
+
+        // Reveal all others
+        foreach (var f in fields)
+        {
+            if (f.GetFieldType() == Field.FieldType.Mine)
+            {
+                f.Reveal();
+
+                // Wait for this
+                yield return new WaitForSeconds(0.15f);
+            }
+        }
+
     }
 
     private IEnumerator FloodFill(Field field)
@@ -141,9 +176,9 @@ public class Game : MonoBehaviour
         if (field.IsMine())
             yield break;
 
-        field.SetState(Field.FieldState.Revealed);
+        field.Reveal();
         var pos = field.GetPosition();
-        
+
         // Check if field has 0 adjacent; if so, flood again to 4 corners
         if (field.GetAdjacentMines() != 0)
             yield break;
@@ -161,78 +196,26 @@ public class Game : MonoBehaviour
         var adjacent = new List<Field>();
         var pos = field.GetPosition();
 
-        if (pos.x + 1 < _width)
+        if (pos.x + 1 < rows)
         {
-            adjacent.Add(_fields[pos.x + 1, pos.y]);
+            adjacent.Add(fields[pos.x + 1, pos.y]);
         }
 
         if (pos.x - 1 >= 0)
         {
-            adjacent.Add(_fields[pos.x - 1, pos.y]);
+            adjacent.Add(fields[pos.x - 1, pos.y]);
         }
-        
-        if (pos.y + 1 < _height)
+
+        if (pos.y + 1 < columns)
         {
-            adjacent.Add(_fields[pos.x, pos.y + 1]);
+            adjacent.Add(fields[pos.x, pos.y + 1]);
         }
 
         if (pos.y - 1 >= 0)
         {
-            adjacent.Add(_fields[pos.x, pos.y - 1]);
+            adjacent.Add(fields[pos.x, pos.y - 1]);
         }
 
         return adjacent;
     }
-
-    private IEnumerator EndGame(Field field)
-    {
-        if (!field.IsMine())
-        {
-            yield break;
-        }
-        
-        Debug.Log("Game has finished");
-        _gameOver = true;
-        
-        // Revealed state
-        field.SetState(Field.FieldState.Revealed);
-        field.SetExploded(true);
-        
-        // Reveal all others
-        foreach (var f in _fields)
-        {
-            if (f.GetFieldType() == Field.FieldType.Mine)
-            {
-                f.SetState(Field.FieldState.Revealed);
-
-                // Wait for this
-                yield return new WaitForSeconds(0.15f);
-            }
-        }
-        
-        _tileManager.UpdateFields(_fields);
-    }
-    
-    private void HandleRightClick()
-    {
-        var field = GetFieldFromMouse();
-
-        // This means that the field is invalid
-        if (field == null)
-            return;
-
-        // Check if the game already ended
-        if (_gameOver)
-        {
-            return;
-        }
-
-        // These states are not updated within the right click
-        if (field.GetState() == Field.FieldState.Revealed || field.GetState() == Field.FieldState.Unknown)
-            return;
-        
-        field.SetState(field.GetState() == Field.FieldState.Flagged ? Field.FieldState.Hidden : Field.FieldState.Flagged);
-        _tileManager.UpdateField(field);
-    }
-    
 }
