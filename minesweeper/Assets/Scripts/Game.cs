@@ -95,6 +95,10 @@ public class Game : MonoBehaviour
 
     public void HandleLeftClick(Field field)
     {
+        // Check the state of the field
+        if (field.GetState() == Field.FieldState.Flagged || field.GetState() == Field.FieldState.Revealed)
+            return;
+
         if (!_started)
         {
             // Start the game if it hasn't started already
@@ -112,10 +116,6 @@ public class Game : MonoBehaviour
         {
             return;
         }
-
-        // Check the state of the field
-        if (field.GetState() == Field.FieldState.Flagged || field.GetState() == Field.FieldState.Revealed)
-            return;
 
         // Check if the field is a mine
         // If it is, end the game
