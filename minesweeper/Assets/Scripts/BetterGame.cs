@@ -103,6 +103,9 @@ public class BetterGame : MonoBehaviour
 
             // Update each field
             _started = true;
+
+            // Start the timer
+            TimerManager.GetInstance().StartTimer();
         }
 
         if (_finished)
@@ -147,6 +150,9 @@ public class BetterGame : MonoBehaviour
         // Revealed state
         field.SetState(BetterField.FieldState.Revealed);
         field.SetExploded(true);
+
+        // Stop the timer
+        TimerManager.GetInstance().StopTimer();
 
         // Reveal all others
         foreach (var f in fields)

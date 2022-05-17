@@ -30,8 +30,9 @@ public class FieldController : MonoBehaviour
         this.imageContext = new FieldImageContext(this);
     }
 
-    private void Update()
+    private void Start()
     {
+        // Update the background
         backgroundContext.Apply();
     }
 
@@ -49,6 +50,9 @@ public class FieldController : MonoBehaviour
             this.imageContext.Apply();          
             return;
         }
+
+        // Update the background
+        this.backgroundContext.Apply();
 
         // Check the amount of adjacent fields
         // If it's more than 0 we need to update the text
