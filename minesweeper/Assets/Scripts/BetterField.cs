@@ -37,6 +37,7 @@ public class BetterField : MonoBehaviour
 			return;
 
 		SetState(GetState() == BetterField.FieldState.Flagged ? BetterField.FieldState.Hidden : BetterField.FieldState.Flagged);
+		controller.Flag();
 	}
 
 	/**

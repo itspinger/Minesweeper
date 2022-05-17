@@ -124,10 +124,9 @@ public class BetterGame : MonoBehaviour
 
         if (field.GetAdjacentMines() != 0)
         {
-            field.SetState(BetterField.FieldState.Revealed);
+            field.Reveal();
 
             // Check for winning condition here
-
             return;
         }
 
@@ -154,7 +153,7 @@ public class BetterGame : MonoBehaviour
         {
             if (f.GetFieldType() == BetterField.FieldType.Mine)
             {
-                f.SetState(BetterField.FieldState.Revealed);
+                f.Reveal();
 
                 // Wait for this
                 yield return new WaitForSeconds(0.15f);
@@ -171,7 +170,7 @@ public class BetterGame : MonoBehaviour
         if (field.IsMine())
             yield break;
 
-        field.SetState(BetterField.FieldState.Revealed);
+        field.Reveal();
         var pos = field.GetPosition();
 
         // Check if field has 0 adjacent; if so, flood again to 4 corners

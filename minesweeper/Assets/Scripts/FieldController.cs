@@ -33,8 +33,6 @@ public class FieldController : MonoBehaviour
     private void Update()
     {
         backgroundContext.Apply();
-        textContext.Apply();
-        imageContext.Apply();
     }
 
     public BetterField GetField()
@@ -44,6 +42,21 @@ public class FieldController : MonoBehaviour
 
     internal void Reveal()
     {
+        // If it's a mine or the field is not a mine
+        // Only imageContext should be called
+        if (field.IsMine() || flagImage.gameObject.activeSelf)
+        {
+            this.imageContext.Apply();          
+            return;
+        }
 
+        // Check the amount of adjacent fields
+        // If it's more than 0 we need to update the text
+        this.textContext.Apply();
+    }
+
+    internal void Flag()
+    {
+        this.imageContext.Apply();
     }
 }
