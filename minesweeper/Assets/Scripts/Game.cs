@@ -141,6 +141,7 @@ public class Game : MonoBehaviour
     {
         if (!field.IsMine())
         {
+            Debug.Log("WTF");
             yield break;
         }
 

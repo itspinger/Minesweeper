@@ -49,7 +49,7 @@ public class TimerManager : MonoBehaviour
 
     public void StopTimer()
     {
-        timer.Restart();
+        timer.Reset();
     }
 
     /**

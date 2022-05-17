@@ -40,6 +40,7 @@ public class FieldImageContext : FieldContext
                 return;
             }
 
+            controller.mineImage.color = RandomColorPicker.GetRandomColor();
             controller.mineImage.gameObject.SetActive(true);
             return;
         }
