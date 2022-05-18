@@ -46,7 +46,7 @@ public class TimerManager : MonoBehaviour
         }
 
         // Get the current time and apply it
-        string time = FormatTime(timer.Elapsed.Seconds);
+        string time = FormatTime((int) timer.Elapsed.TotalSeconds);
         timeText.SetText(time);
     }
 
@@ -66,6 +66,15 @@ public class TimerManager : MonoBehaviour
     public void StopTimer()
     {
         timer.Reset();
+    }
+
+    public void ResetTimer()
+    {
+        // First stop the timer
+        StopTimer();
+
+        // Now replace the text
+        timeText.SetText(FormatTime(0));
     }
 
     /**

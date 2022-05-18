@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Game : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class Game : MonoBehaviour
     // Game Settings
     private int rows = 8;
     private int columns = 10;
-    private int mines = 20;
+    private int mines = 10;
 
     private bool _started, _finished;
     private Field[,] fields;
@@ -52,6 +53,13 @@ public class Game : MonoBehaviour
         // Now initalize the important stuff
         InitField();
 
+        // Set the game to not finished and not started
+        _started = false;
+        _finished = false;
+
+        // Reset the timer
+        TimerManager.GetInstance().ResetTimer();
+
         // Check for resize
         if (OnInit != null)
         {
@@ -75,7 +83,7 @@ public class Game : MonoBehaviour
         // Get the grid
         // In order to fill out the game
         GridLayoutGroup grid = fieldTranfsorm.GetComponent<GridLayoutGroup>();
-        fieldTranfsorm.sizeDelta = new Vector2(rows * grid.cellSize.x, columns * grid.cellSize.y);
+        fieldTranfsorm.sizeDelta = new Vector2(columns * grid.cellSize.x, rows * grid.cellSize.y);
 
         // Create new fields
         // For the game
@@ -92,6 +100,36 @@ public class Game : MonoBehaviour
                 fields[i, j].setOdd((i + j) % 2 == 0);
             }
         }
+    }
+
+    public void SetDifficulty(TMP_Dropdown dropdown)
+    {
+        // Get the value of the dropdown
+        int value = dropdown.value;
+
+        if (value == 0)
+        {
+            SetDifficulty(8, 10, 10);
+            return;
+        }
+
+        if (value == 1)
+        {
+            SetDifficulty(14, 18, 40);
+            return;
+        }
+
+        SetDifficulty(20, 24, 99);
+    }
+
+    public void SetDifficulty(int rows, int column, int mines)
+    {
+        this.rows = rows;
+        this.columns = column;
+        this.mines = mines;
+
+        // Start the delayed coroutine
+        StartCoroutine(CreateGame());
     }
 
     public void HandleRightClick(Field field)
