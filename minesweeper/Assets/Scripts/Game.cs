@@ -11,16 +11,16 @@ public class Game : MonoBehaviour
     // The field prefab
     public GameObject fieldPrefab;
     public RectTransform fieldTranfsorm;
+    //public GameDifficulty difficulty;
+    public event System.Action OnInit;
 
     // Game Settings
     private int rows = 8;
-    private int columns = 8;
-    private int mines = 10;
+    private int columns = 10;
+    private int mines = 20;
 
     private bool _started, _finished;
     private Field[,] fields;
-
-    public event System.Action OnInit;
 
     private void Awake()
     {
@@ -154,7 +154,6 @@ public class Game : MonoBehaviour
     {
         if (!field.IsMine())
         {
-            Debug.Log("WTF");
             yield break;
         }
 
@@ -170,7 +169,7 @@ public class Game : MonoBehaviour
         // Reveal all others
         foreach (var f in fields)
         {
-            if (f.GetFieldType() == Field.FieldType.Mine)
+            if (f.IsMine())
             {
                 f.Reveal();
 
