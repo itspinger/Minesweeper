@@ -2,6 +2,7 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using TMPro;
 
@@ -12,8 +13,12 @@ public class Game : MonoBehaviour
     // The field prefab
     public GameObject fieldPrefab;
     public RectTransform fieldTranfsorm;
-    //public GameDifficulty difficulty;
     public event System.Action OnInit;
+
+    // Events for different calls
+    public UnityEvent OnCreate;
+    public UnityEvent OnWin;
+    public UnityEvent OnEnd;
 
     // Game Settings
     private int rows = 8;
@@ -45,10 +50,20 @@ public class Game : MonoBehaviour
         StartCoroutine(CreateGame());
     }
 
-    private IEnumerator CreateGame()
+    public IEnumerator CreateGame()
     {
         // Just delay the start a second
         yield return new WaitForEndOfFrame();
+
+        // We need to have a new method created
+        // Because the inspector doesn't recognize
+        // IEnumerators as methods
+        InitGame();
+    }
+
+    public void InitGame() {
+        // Invoke the event
+        OnCreate.Invoke();
 
         // Now initalize the important stuff
         InitField();
@@ -216,6 +231,8 @@ public class Game : MonoBehaviour
             }
         }
 
+        // Invoke end event
+        OnEnd.Invoke();
     }
 
     private IEnumerator FloodFill(Field field)
