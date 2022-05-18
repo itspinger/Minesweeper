@@ -10,6 +10,7 @@ public class TimerManager : MonoBehaviour
     private readonly Stopwatch timer = new Stopwatch();
 
     public TMP_Text timeText;
+    public TMP_Text flagText;
 
     private void Awake()
     {
@@ -24,6 +25,21 @@ public class TimerManager : MonoBehaviour
 
     private void Update()
     {
+        if (Game.instance == null)
+        {
+            return;
+        }
+
+        // Get the number of mines
+        // In this game
+        int mineCount = Game.instance.GetMineCount();
+
+        // Check how many fields are flagged
+        int flags = Game.instance.GetFlaggedMines();
+
+        // Set the text
+        flagText.text = (mineCount - flags).ToString();
+
         if (!timer.IsRunning)
         {
             return;

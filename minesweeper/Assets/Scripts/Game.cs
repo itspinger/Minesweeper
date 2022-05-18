@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -93,6 +94,18 @@ public class Game : MonoBehaviour
         }
     }
 
+    public void HandleRightClick(Field field)
+    {
+        // Cancel the event if the game is finished
+        if (_finished)
+        {
+            return;
+        }
+
+        // Perform the field statement
+        field.HandleRightClick();
+    }
+
     public void HandleLeftClick(Field field)
     {
         // Check the state of the field
@@ -149,8 +162,7 @@ public class Game : MonoBehaviour
         _finished = true;
 
         // Revealed state
-        field.SetState(Field.FieldState.Revealed);
-        field.SetExploded(true);
+        field.Reveal();
 
         // Stop the timer
         TimerManager.GetInstance().StopTimer();
@@ -178,7 +190,6 @@ public class Game : MonoBehaviour
             yield break;
 
         field.Reveal();
-        var pos = field.GetPosition();
 
         // Check if field has 0 adjacent; if so, flood again to 4 corners
         if (field.GetAdjacentMines() != 0)
@@ -190,6 +201,39 @@ public class Game : MonoBehaviour
         {
             StartCoroutine(FloodFill(adjacentField));
         }
+    }
+
+    public int GetMineCount()
+    {
+        return this.mines;
+    }
+
+    public int GetFlaggedMines()
+    {
+        if (fields == null)
+        {
+            return 0;
+        }
+
+        int count = 0;
+
+        // Loop through each field
+        foreach (var field in fields)
+        {
+            // We need to check for null
+            // Since the game hasn't started yet
+            if (field == null)
+            {
+                continue;
+            }
+
+            if (field.GetState() == Field.FieldState.Flagged)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private IEnumerable<Field> GetAdjacentFields(Field field)

@@ -7,7 +7,6 @@ public class Field : MonoBehaviour
 	private FieldState _state = FieldState.Hidden;
 
 	private int _adjacentMines;
-	private bool _exploded;
 	private bool odd;
 	private Vector2Int position;
 
@@ -19,13 +18,17 @@ public class Field : MonoBehaviour
 		// Get the controller from the gameObject
 		controller = GetComponent<FieldController>();
 
-		// Attaches the left click listener
+		// Attaches the left click and right click listener
 		// To the game manager
 		clickableButton.OnLeftClick.AddListener(() => Game.instance.HandleLeftClick(this));
+		clickableButton.OnRightClick.AddListener(() => Game.instance.HandleRightClick(this));
     }
 
 	public void Reveal()
     {
+		if (GetState() == FieldState.Revealed)
+			return;
+
 		// Reveal the field
 		SetState(Field.FieldState.Revealed);
 		controller.Reveal();
@@ -95,31 +98,12 @@ public class Field : MonoBehaviour
 	}
 
 	/**
-	 * This method sets this field as an exploded mine.
-	 */
-
-	public void SetExploded(bool exploded)
-	{
-		_exploded = exploded;
-	}
-
-	/**
 	 * This method sets the amount of adjacent mines to this field.
 	 */
 
 	public void SetAdjacentMines(int adjacentMines)
 	{
 		_adjacentMines = adjacentMines;
-	}
-
-	/**
-	 * This method returns whether this specific field
-	 * was the one that exploded, if any exploded at all.
-	 */
-
-	public bool HasExploded()
-	{
-		return _exploded;
 	}
 
 	/**
