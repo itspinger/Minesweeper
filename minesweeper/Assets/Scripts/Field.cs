@@ -20,11 +20,11 @@ public class Field : MonoBehaviour
 
 		// Attaches the left click and right click listener
 		// To the game manager
-		clickableButton.OnLeftClick.AddListener(() => Game.instance.HandleLeftClick(this));
-		clickableButton.OnRightClick.AddListener(() => Game.instance.HandleRightClick(this));
+		clickableButton.OnLeftClick.AddListener(() => Game.GetInstance().HandleLeftClick(this));
+        clickableButton.OnRightClick.AddListener(() => Game.GetInstance().HandleRightClick(this));
     }
 
-	public void Reveal()
+    public void Reveal()
     {
 		if (GetState() == FieldState.Revealed)
 			return;

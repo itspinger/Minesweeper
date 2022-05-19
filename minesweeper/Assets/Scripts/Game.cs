@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,7 +7,7 @@ using TMPro;
 
 public class Game : MonoBehaviour
 {
-    public static Game instance;
+    private static Game instance;
 
     // The field prefab
     public GameObject fieldPrefab;
@@ -48,6 +47,11 @@ public class Game : MonoBehaviour
     {
         // Initialize the stuff
         StartCoroutine(CreateGame());
+    }
+
+    public static Game GetInstance()
+    {
+        return instance;
     }
 
     public IEnumerator CreateGame()
@@ -196,11 +200,13 @@ public class Game : MonoBehaviour
             field.Reveal();
 
             // Check for winning condition here
+            TryWinGame();
             return;
         }
 
         StartCoroutine(FloodFill(field));
         // Check win condition
+        TryWinGame();
     }
 
     public IEnumerator EndGame(Field field)
@@ -255,6 +261,28 @@ public class Game : MonoBehaviour
         {
             StartCoroutine(FloodFill(adjacentField));
         }
+    }
+
+    private void TryWinGame()
+    {
+        // Search for any fields
+        // Which are not mines and uncovered
+        foreach (var field in fields)
+        {
+            if (!field.IsMine() && field.GetState() != Field.FieldState.Revealed)
+            {
+                return;
+            }
+        }
+
+        // The game is finished
+        OnWin.Invoke();
+
+        // Stop the timer
+        TimerManager.GetInstance().StopTimer();
+
+        // Set the flag to finished
+        _finished = true;
     }
 
     public int GetMineCount()

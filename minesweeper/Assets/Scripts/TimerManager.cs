@@ -25,17 +25,17 @@ public class TimerManager : MonoBehaviour
 
     private void Update()
     {
-        if (Game.instance == null)
+        if (Game.GetInstance() == null)
         {
             return;
         }
 
         // Get the number of mines
         // In this game
-        int mineCount = Game.instance.GetMineCount();
+        int mineCount = Game.GetInstance().GetMineCount();
 
         // Check how many fields are flagged
-        int flags = Game.instance.GetFlaggedMines();
+        int flags = Game.GetInstance().GetFlaggedMines();
 
         // Set the text
         flagText.text = (mineCount - flags).ToString();
