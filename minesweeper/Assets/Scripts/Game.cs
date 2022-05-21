@@ -20,8 +20,8 @@ public class Game : MonoBehaviour
     public UnityEvent OnEnd;
 
     // Game Settings
-    private int rows = 8;
-    private int columns = 10;
+    private int rows = 20;
+    private int columns = 24;
     private int mines = 10;
 
     private bool _started, _finished;

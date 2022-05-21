@@ -6,11 +6,12 @@ using UnityEngine.UI;
 
 public class BetterScreenSizer : MonoBehaviour
 {
-    public Vector2 aspectRatio = new Vector2(1100, 700);
+    public Vector2 aspectRatio = new Vector2(700, 660);
     public bool debug = false;
     public RectTransform minefield;
     public Vector2Int padding;
     public CanvasScaler canvasScaler;
+    public CanvasScaler menuScaler;
     private Vector2Int lastResolution;
     private bool setting;
     private bool forceResize;
@@ -31,6 +32,7 @@ public class BetterScreenSizer : MonoBehaviour
         var resolution = new Vector2Int(Screen.width, Screen.height);
         if (debug)
             Debug.Log("Screen: " + resolution);
+
         //#if !UNITY_EDITOR
         if (!setting)
         {
@@ -38,12 +40,18 @@ public class BetterScreenSizer : MonoBehaviour
             if (resolution.x != lastResolution.x)
             {
                 float h = resolution.x * (aspectRatio.y / aspectRatio.x);
-                StartCoroutine(SetResolution(resolution.x, (int)h));
+                if (h > 900)
+                    h /= 2;
+
+                StartCoroutine(SetResolution(resolution.x, (int)h / 2));
             }
             else if (resolution.y != lastResolution.y || forceResize)
             {
                 float w = resolution.y * (aspectRatio.x / aspectRatio.y);
-                StartCoroutine(SetResolution((int)w, resolution.y));
+                if (w > 900)
+                    w /= 2;
+
+                StartCoroutine(SetResolution((int) w / 2, resolution.y));
             }
         }
         //#endif
@@ -52,8 +60,9 @@ public class BetterScreenSizer : MonoBehaviour
     {
         setting = true;
         forceResize = false;
-        canvasScaler.referenceResolution = new Vector2(minefield.sizeDelta.x + padding.x, minefield.sizeDelta.y + padding.y);
-        Screen.SetResolution(w, h, false);
+        Vector2 scale = new Vector2(minefield.sizeDelta.x + padding.x, minefield.sizeDelta.y + padding.y);
+        canvasScaler.referenceResolution = scale;
+        menuScaler.referenceResolution = scale;
         yield return new WaitForSeconds(.5f);
         lastResolution = new Vector2Int(w, h);
         setting = false;
