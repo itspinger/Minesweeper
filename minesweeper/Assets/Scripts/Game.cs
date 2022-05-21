@@ -20,8 +20,8 @@ public class Game : MonoBehaviour
     public UnityEvent OnEnd;
 
     // Game Settings
-    private int rows = 20;
-    private int columns = 24;
+    private int rows = 8;
+    private int columns = 10;
     private int mines = 10;
 
     private bool _started, _finished;
@@ -171,7 +171,8 @@ public class Game : MonoBehaviour
 
         if (!_started)
         {
-            // Start the game if it hasn't started already
+            // Generate the fields
+            // Based on the first clicked field
             FieldGenerator.CreateMines(fields, mines, field);
             FieldGenerator.CountAdjacentMines(fields);
 
@@ -269,6 +270,8 @@ public class Game : MonoBehaviour
         // Which are not mines and uncovered
         foreach (var field in fields)
         {
+            // Try to find a field that isn't a mine
+            // And isn't revealed
             if (!field.IsMine() && field.GetState() != Field.FieldState.Revealed)
             {
                 return;

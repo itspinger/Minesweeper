@@ -33,9 +33,15 @@ public class ScreenSizer : MonoBehaviour
             gameScaler.referenceResolution = currentRatio;
             menuScaler.referenceResolution = currentRatio;
 
-            if (currentRatio.x > 900 || currentRatio.y > 900)
+            if (currentRatio.x > 1500 || currentRatio.y > 1500)
             {
                 // Update the resolution
+                Screen.SetResolution((int) (currentRatio.x / 2), (int) (currentRatio.y / 2), false);
+                return;
+            }
+
+            if (currentRatio.x > 1200 || currentRatio.y > 1200)
+            {
                 Screen.SetResolution((int) (currentRatio.x / 1.5), (int) (currentRatio.y / 1.5), false);
                 return;
             }
