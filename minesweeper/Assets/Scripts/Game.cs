@@ -43,15 +43,36 @@ public class Game : MonoBehaviour
         fields = new Field[rows, columns];
     }
 
+    /**
+     * This method returns a field which is next to this field
+     * by a certain vector.
+     */
+
+    public Field GetField(Field field, Vector2Int position)
+    {
+        // Get the position of the field
+        var pos = field.GetPosition(); 
+
+        // Check if it exceeds the row count
+        if (pos.x + position.x >= rows)
+        {
+            return null;
+        }
+
+        // Check if it exceeds the column count
+        if (pos.y + position.y >= columns)
+        {
+            return null;
+        }
+
+        // Return the field
+        return fields[pos.x + position.x, pos.y + position.y];
+    }
+
     private void Start()
     {
         // Initialize the stuff
         StartCoroutine(CreateGame());
-    }
-
-    public static Game GetInstance()
-    {
-        return instance;
     }
 
     public IEnumerator CreateGame()
@@ -321,10 +342,13 @@ public class Game : MonoBehaviour
         return count;
     }
 
-    private IEnumerable<Field> GetAdjacentFields(Field field)
+    public IEnumerable<Field> GetAdjacentFields(Field field)
     {
         var adjacent = new List<Field>();
         var pos = field.GetPosition();
+
+        Debug.Log(pos.x + " " + pos.y);
+        Debug.Log(rows + " " + columns);
 
         if (pos.x + 1 < rows)
         {
@@ -347,5 +371,10 @@ public class Game : MonoBehaviour
         }
 
         return adjacent;
+    }
+
+    public static Game GetInstance()
+    {
+        return instance;
     }
 }

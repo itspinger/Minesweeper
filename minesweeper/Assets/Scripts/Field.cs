@@ -24,6 +24,11 @@ public class Field : MonoBehaviour
         clickableButton.OnRightClick.AddListener(() => Game.GetInstance().HandleRightClick(this));
     }
 
+	public Field GetField(Vector2Int position)
+    {
+		return Game.GetInstance().GetField(this, position);
+    }
+
     public void Reveal()
     {
 		if (GetState() == FieldState.Revealed)

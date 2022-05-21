@@ -8,6 +8,7 @@ public class FieldController : MonoBehaviour
     private FieldTextContext textContext;
     private FieldBackgroundContext backgroundContext;
     private FieldImageContext imageContext;
+    private FieldBorderContext borderContext;
 
     // Controller objects
     public TMP_Text adjacentText;
@@ -15,6 +16,9 @@ public class FieldController : MonoBehaviour
     public Image flagImage;
     public Image mineImage;
     public Image xImage;
+
+    // BorderObject
+    public GameObject borderObject;
 
     private void Awake()
     {
@@ -25,12 +29,21 @@ public class FieldController : MonoBehaviour
         this.textContext = new FieldTextContext(this);
         this.backgroundContext = new FieldBackgroundContext(this); 
         this.imageContext = new FieldImageContext(this);
+
+        // Get the images from the children
+        this.borderContext = new FieldBorderContext(this, borderObject.GetComponentsInChildren<Image>(true));
     }
 
     private void Start()
     {
         // Update the background
         backgroundContext.Apply();
+    }
+
+    private void Update()
+    {
+        // Update the border
+        borderContext.Apply();
     }
 
     public Field GetField()
