@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
 using TMPro;
@@ -12,6 +10,9 @@ public class TimerManager : MonoBehaviour
     public TMP_Text timeText;
     public TMP_Text flagText;
 
+    public TMP_Text scoreText;
+    public TMP_Text recordText;
+
     private void Awake()
     {
         if (instance == null)
@@ -21,6 +22,8 @@ public class TimerManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+
+        Game.GetInstance().OnWin.AddListener(() => UpdateTime());
     }
 
     private void Update()
@@ -48,6 +51,19 @@ public class TimerManager : MonoBehaviour
         // Get the current time and apply it
         string time = FormatTime((int) timer.Elapsed.TotalSeconds);
         timeText.SetText(time);
+    }
+
+    private void UpdateTime()
+    {
+        // Update the score text
+        scoreText.text = timeText.text;
+
+        // In order to see if it is a new record
+        // We need to check for the differences in text
+        if (int.Parse(recordText.text) > int.Parse(scoreText.text))
+        {
+            recordText.text = scoreText.text;
+        }
     }
 
     /**

@@ -43,7 +43,7 @@ public class FieldController : MonoBehaviour
     private void Update()
     {
         // Update the border
-        borderContext.Apply();
+        //borderContext.Apply();
     }
 
     public Field GetField()
