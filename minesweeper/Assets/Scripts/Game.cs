@@ -133,11 +133,15 @@ public class Game : MonoBehaviour
             {
                 GameObject field = Instantiate(fieldPrefab, fieldTranfsorm);
 
-                // Add its script to the fields
-                // And set the parity
                 fields[i, j] = field.GetComponent<Field>();
                 fields[i, j].setPosition(new Vector2Int(i, j));
                 fields[i, j].setOdd((i + j) % 2 == 0);
+
+               // Add its script to the fields
+               // And set the parity
+               //fields[rows - i - 1, j] = field.GetComponent<Field>();
+               //fields[rows - i - 1, j].setPosition(new Vector2Int(rows - i - 1, j));
+               //fields[rows - i - 1, j].setOdd((rows - i - 1 + j) % 2 == 0);
             }
         }
     }

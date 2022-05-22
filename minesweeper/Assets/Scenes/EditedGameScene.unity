@@ -1250,7 +1250,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -100}
-  m_SizeDelta: {x: 1920, y: 1080}
+  m_SizeDelta: {x: 700, y: 660}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &736169876
 MonoBehaviour:
@@ -1270,7 +1270,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_StartCorner: 0
+  m_StartCorner: 2
   m_StartAxis: 0
   m_CellSize: {x: 70, y: 70}
   m_Spacing: {x: 0, y: 0}
@@ -1290,9 +1290,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1539,7 +1539,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 883546391}
-  - component: {fileID: 883546390}
   - component: {fileID: 883546392}
   m_Layer: 0
   m_Name: ScreenSizer
@@ -1548,24 +1547,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &883546390
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 883546389}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f7025d3f0e2e5f40bcc890409240aa1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aspectRatio: {x: 500, y: 500}
-  debug: 0
-  minefield: {fileID: 736169875}
-  padding: {x: 0, y: 100}
-  canvasScaler: {fileID: 545524864}
-  menuScaler: {fileID: 1175978983}
 --- !u!4 &883546391
 Transform:
   m_ObjectHideFlags: 0
