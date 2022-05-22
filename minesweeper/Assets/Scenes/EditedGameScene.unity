@@ -3935,6 +3935,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeText: {fileID: 1578706054}
   flagText: {fileID: 1294377913}
+  scoreText: {fileID: 812442867}
+  recordText: {fileID: 1903176948}
 --- !u!1 &1903176946
 GameObject:
   m_ObjectHideFlags: 0

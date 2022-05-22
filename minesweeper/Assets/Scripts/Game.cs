@@ -12,7 +12,6 @@ public class Game : MonoBehaviour
     // The field prefab
     public GameObject fieldPrefab;
     public RectTransform fieldTranfsorm;
-    public event System.Action OnInit;
 
     // Events for different calls
     public UnityEvent OnCreate;
@@ -99,12 +98,6 @@ public class Game : MonoBehaviour
 
         // Reset the timer
         TimerManager.GetInstance().ResetTimer();
-
-        // Check for resize
-        if (OnInit != null)
-        {
-            OnInit();
-        }
     }
 
     private void InitField()
