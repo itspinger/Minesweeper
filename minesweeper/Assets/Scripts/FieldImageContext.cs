@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class FieldImageContext : FieldContext
 {
     public FieldImageContext(FieldController controller) : base(controller)
@@ -51,6 +47,11 @@ public class FieldImageContext : FieldContext
         {
             return;
         }
+
+        // Check if the game has ended
+        // And do this
+        if (!Game.GetInstance().HasEnded())
+            return;
 
         controller.flagImage.gameObject.SetActive(false);
         controller.xImage.gameObject.SetActive(true);

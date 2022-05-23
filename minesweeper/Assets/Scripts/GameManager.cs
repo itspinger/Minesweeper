@@ -1,10 +1,11 @@
 using UnityEngine;
 using System.Diagnostics;
 using TMPro;
+using System;
 
-public class TimerManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    private static TimerManager instance;
+    private static GameManager instance;
     private readonly Stopwatch timer = new Stopwatch();
 
     public TMP_Text timeText;
@@ -53,6 +54,11 @@ public class TimerManager : MonoBehaviour
         timeText.SetText(time);
     }
 
+    /**
+     * This method updates the record time 
+     * on the game finish.
+     */
+
     private void UpdateTime()
     {
         // Update the score text
@@ -60,9 +66,14 @@ public class TimerManager : MonoBehaviour
 
         // In order to see if it is a new record
         // We need to check for the differences in text
-        if (int.Parse(recordText.text) > int.Parse(scoreText.text))
+        try
         {
-            recordText.text = scoreText.text;
+            if (int.Parse(recordText.text) > int.Parse(scoreText.text))
+            {
+                recordText.text = scoreText.text;
+            }
+        }
+        catch (Exception) { 
         }
     }
 
@@ -83,6 +94,11 @@ public class TimerManager : MonoBehaviour
     {
         timer.Reset();
     }
+
+    /**
+     * This method restarts the current timer,
+     * and also resets the time text to 0.
+     */
 
     public void ResetTimer()
     {
@@ -108,7 +124,7 @@ public class TimerManager : MonoBehaviour
      * of the timer manager type.
      */
 
-    public static TimerManager GetInstance()
+    public static GameManager GetInstance()
     {
         return instance;
     }

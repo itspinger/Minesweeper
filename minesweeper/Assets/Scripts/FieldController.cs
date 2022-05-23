@@ -36,14 +36,7 @@ public class FieldController : MonoBehaviour
 
     private void Start()
     {
-        // Update the background
         backgroundContext.Apply();
-    }
-
-    private void Update()
-    {
-        // Update the border
-        //borderContext.Apply();
     }
 
     public Field GetField()
@@ -51,7 +44,7 @@ public class FieldController : MonoBehaviour
         return field;
     }
 
-    internal void Reveal()
+    public void Reveal()
     {
         // If it's a mine or the field is not a mine
         // Only imageContext should be called
@@ -69,7 +62,7 @@ public class FieldController : MonoBehaviour
         this.textContext.Apply();
     }
 
-    internal void Flag()
+    public void Flag()
     {
         this.imageContext.Apply();
     }

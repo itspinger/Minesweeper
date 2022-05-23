@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using TMPro;
 
 public class Game : MonoBehaviour
 {
@@ -23,7 +23,7 @@ public class Game : MonoBehaviour
     private int columns = 10;
     private int mines = 10;
 
-    private bool _started, _finished;
+    private bool started, finished;
     private Field[,] fields;
 
     private void Awake()
@@ -42,6 +42,12 @@ public class Game : MonoBehaviour
         fields = new Field[rows, columns];
     }
 
+    private void Start()
+    {
+        // Initialize the stuff
+        StartCoroutine(CreateGame());
+    }
+
     /**
      * This method returns a field which is next to this field
      * by a certain vector.
@@ -53,25 +59,19 @@ public class Game : MonoBehaviour
         var pos = field.GetPosition(); 
 
         // Check if it exceeds the row count
-        if (pos.x + position.x >= rows)
+        if (pos.x + position.x >= rows || pos.x + position.x < 0)
         {
             return null;
         }
 
         // Check if it exceeds the column count
-        if (pos.y + position.y >= columns)
+        if (pos.y + position.y >= columns || pos.y + position.y < 0)
         {
             return null;
         }
 
         // Return the field
         return fields[pos.x + position.x, pos.y + position.y];
-    }
-
-    private void Start()
-    {
-        // Initialize the stuff
-        StartCoroutine(CreateGame());
     }
 
     public IEnumerator CreateGame()
@@ -93,11 +93,11 @@ public class Game : MonoBehaviour
         InitField();
 
         // Set the game to not finished and not started
-        _started = false;
-        _finished = false;
+        started = false;
+        finished = false;
 
         // Reset the timer
-        TimerManager.GetInstance().ResetTimer();
+        GameManager.GetInstance().ResetTimer();
     }
 
     private void InitField()
@@ -129,12 +129,6 @@ public class Game : MonoBehaviour
                 fields[i, j] = field.GetComponent<Field>();
                 fields[i, j].setPosition(new Vector2Int(i, j));
                 fields[i, j].setOdd((i + j) % 2 == 0);
-
-               // Add its script to the fields
-               // And set the parity
-               //fields[rows - i - 1, j] = field.GetComponent<Field>();
-               //fields[rows - i - 1, j].setPosition(new Vector2Int(rows - i - 1, j));
-               //fields[rows - i - 1, j].setOdd((rows - i - 1 + j) % 2 == 0);
             }
         }
     }
@@ -159,10 +153,10 @@ public class Game : MonoBehaviour
         SetDifficulty(20, 24, 99);
     }
 
-    public void SetDifficulty(int rows, int column, int mines)
+    public void SetDifficulty(int rows, int columns, int mines)
     {
         this.rows = rows;
-        this.columns = column;
+        this.columns = columns;
         this.mines = mines;
 
         // Start the delayed coroutine
@@ -172,22 +166,22 @@ public class Game : MonoBehaviour
     public void HandleRightClick(Field field)
     {
         // Cancel the event if the game is finished
-        if (_finished)
+        if (finished)
         {
             return;
         }
 
         // Perform the field statement
-        field.HandleRightClick();
+        field.Flag();
     }
 
     public void HandleLeftClick(Field field)
     {
         // Check the state of the field
-        if (field.GetState() == Field.FieldState.Flagged || field.GetState() == Field.FieldState.Revealed)
+        if (field.GetState() != Field.FieldState.Hidden)
             return;
 
-        if (!_started)
+        if (!started)
         {
             // Generate the fields
             // Based on the first clicked field
@@ -195,13 +189,13 @@ public class Game : MonoBehaviour
             FieldGenerator.CountAdjacentMines(fields);
 
             // Update each field
-            _started = true;
+            started = true;
 
             // Start the timer
-            TimerManager.GetInstance().StartTimer();
+            GameManager.GetInstance().StartTimer();
         }
 
-        if (_finished)
+        if (finished)
         {
             return;
         }
@@ -236,13 +230,13 @@ public class Game : MonoBehaviour
         }
 
         Debug.Log("Game has finished");
-        _finished = true;
+        finished = true;
 
         // Revealed state
         field.Reveal();
 
         // Stop the timer
-        TimerManager.GetInstance().StopTimer();
+        GameManager.GetInstance().StopTimer();
 
         // Reveal all others
         foreach (var f in fields)
@@ -300,10 +294,15 @@ public class Game : MonoBehaviour
         OnWin.Invoke();
 
         // Stop the timer
-        TimerManager.GetInstance().StopTimer();
+        GameManager.GetInstance().StopTimer();
 
         // Set the flag to finished
-        _finished = true;
+        finished = true;
+    }
+
+    public bool HasEnded()
+    {
+        return this.finished;
     }
 
     public int GetMineCount()
@@ -343,9 +342,6 @@ public class Game : MonoBehaviour
     {
         var adjacent = new List<Field>();
         var pos = field.GetPosition();
-
-        Debug.Log(pos.x + " " + pos.y);
-        Debug.Log(rows + " " + columns);
 
         if (pos.x + 1 < rows)
         {

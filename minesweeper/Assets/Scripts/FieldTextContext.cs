@@ -59,8 +59,8 @@ public class FieldTextContext : FieldContext
             Create(new Color32[] { 
                         new Color32(25, 118, 210, 255), new Color32(56, 142, 60, 255),
                         new Color32(211, 48, 48, 255), new Color32(123, 31, 162, 255),
-                        new Color32(123, 31, 162, 255), new Color32(123, 31, 162, 255),
-                        new Color32(123, 31, 162, 255), new Color32(123, 31, 162, 255)
+                        new Color32(255, 143, 1, 255), new Color32(4, 148, 166, 255),
+                        new Color32(64, 64, 64, 255), new Color32(160, 158, 150, 255)
                   });
         }
 

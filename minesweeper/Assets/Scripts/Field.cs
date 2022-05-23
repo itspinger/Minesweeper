@@ -1,16 +1,15 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Field : MonoBehaviour
 {
-	private FieldType _type = FieldType.Default;
-	private FieldState _state = FieldState.Hidden;
+	private FieldType type = FieldType.Default;
+	private FieldState state = FieldState.Hidden;
 
-	private int _adjacentMines;
+	private int adjacentMines;
 	private bool odd;
 	private Vector2Int position;
+	private FieldController controller;
 
-	public FieldController controller;
 	public ClickableButton clickableButton;
 
     private void Awake()
@@ -24,10 +23,19 @@ public class Field : MonoBehaviour
         clickableButton.OnRightClick.AddListener(() => Game.GetInstance().HandleRightClick(this));
     }
 
-	public Field GetField(Vector2Int position)
+    /**
+	 * This method returns a field adjacent
+	 * to this field by a certain vector.
+	 */
+
+    public Field GetField(Vector2Int position)
     {
 		return Game.GetInstance().GetField(this, position);
     }
+
+	/**
+	 * This method reveals the field.
+	 */
 
     public void Reveal()
     {
@@ -39,7 +47,10 @@ public class Field : MonoBehaviour
 		controller.Reveal();
     }
 
-	public void HandleRightClick()
+	/**
+	 * This method flags the field.
+	 */
+	public void Flag()
 	{
 		if (GetState() == FieldState.Revealed)
 			return;
@@ -65,7 +76,7 @@ public class Field : MonoBehaviour
 
 	public bool IsMine()
 	{
-		return _type == FieldType.Mine;
+		return type == FieldType.Mine;
 	}
 
 	/**
@@ -82,7 +93,6 @@ public class Field : MonoBehaviour
 		this.odd = odd;
 	}
 
-
 	/**
 	 * This method changes the current state of this field
 	 * to the one specified in the arguments.
@@ -90,7 +100,7 @@ public class Field : MonoBehaviour
 
 	public void SetState(FieldState state)
 	{
-		_state = state;
+		this.state = state;
 	}
 
 	/**
@@ -99,7 +109,7 @@ public class Field : MonoBehaviour
 
 	public void SetType(FieldType type)
 	{
-		_type = type;
+		this.type = type;
 	}
 
 	/**
@@ -108,7 +118,7 @@ public class Field : MonoBehaviour
 
 	public void SetAdjacentMines(int adjacentMines)
 	{
-		_adjacentMines = adjacentMines;
+		this.adjacentMines = adjacentMines;
 	}
 
 	/**
@@ -118,7 +128,7 @@ public class Field : MonoBehaviour
 
 	public int GetAdjacentMines()
 	{
-		return _adjacentMines;
+		return adjacentMines;
 	}
 
 	/*
@@ -130,11 +140,22 @@ public class Field : MonoBehaviour
 
 	public FieldType GetFieldType()
 	{
-		return _type;
+		return type;
 	}
+
+	/**
+	 * This method sets the position of this field.
+	 * Do note that this position, cannot be changed once already set.
+	 */
 
 	public void setPosition(Vector2Int position)
     {
+		if (this.position != null)
+        {
+			return;
+        }
+
+
 		this.position = position;
     }
 
@@ -144,7 +165,7 @@ public class Field : MonoBehaviour
 
 	public FieldState GetState()
 	{
-		return _state;
+		return state;
 	}
 
 	/**
