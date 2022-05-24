@@ -42,7 +42,7 @@ public class FieldBorderContext : FieldContext
         }
 
         // Check for adjacent fields
-        var fields = Game.GetInstance().GetAdjacentFields(currentField);
+        var fields = currentField.GetAdjacentFields();
 
         // Loop through each field
         foreach (var field in fields)
@@ -82,10 +82,6 @@ public class FieldBorderContext : FieldContext
             {
                 return;
             }
-
-            Debug.Log("I am at the postition " + controller.GetField().GetPosition());
-            Debug.Log("Looking at field " + field.GetPosition());
-            Debug.Log("State of the field: " + field.GetState());
 
             if (field.GetState() != Field.FieldState.Revealed)
             {

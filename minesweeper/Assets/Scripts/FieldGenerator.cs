@@ -66,7 +66,7 @@ public static class FieldGenerator
 		// Loop through each adjacent field
 		// And check if the position
 		// Is equal to the adjacent field
-		var adjacentFields = GetAdjacentFields(fields, pos.x, pos.y);
+		var adjacentFields = exception.GetAdjacentFields();
 		foreach (var v in adjacentFields)
 		{
 			pos = v.GetPosition();
@@ -98,32 +98,9 @@ public static class FieldGenerator
 				if (field.GetFieldType() == Field.FieldType.Mine)
 					continue;
 
-				var count = CountAdjacent(fields, i, j);
+				var count = field.GetAdjacentFields().Count(field => field.IsMine());
 				fields[i, j].SetAdjacentMines(count);
 			}
 		}
-	}
-
-	private static int CountAdjacent(Field[,] fields, int x, int y)
-	{
-		return GetAdjacentFields(fields, x, y).Count(field => field.GetFieldType() == Field.FieldType.Mine);
-	}
-	
-	private static IEnumerable<Field> GetAdjacentFields(Field[,] fields, int x, int y)
-	{
-		var adjacent = new List<Field>();
-		
-		var width = fields.GetLength(0);
-		var height = fields.GetLength(1);
-		
-		for (var i = Math.Max(0, x - 1); i <= Math.Min(x + 1, width - 1); i++)
-		{
-			for (var j = Math.Max(0, y - 1); j <= Math.Min(y + 1, height - 1); j++)
-			{
-				adjacent.Add(fields[i, j]);
-			}
-		}
-
-		return adjacent;
 	}
 }

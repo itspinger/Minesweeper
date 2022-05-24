@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Field : MonoBehaviour
 {
@@ -33,13 +34,39 @@ public class Field : MonoBehaviour
 		return Game.GetInstance().GetField(this, position);
     }
 
+	public List<Field> GetAdjacentFields()
+    {
+        var fields = new List<Field>();
+
+		// Loop through each field
+		// And find adjacent fields
+        for (int i = -1; i <= 1; i++)
+        {
+			for (int j = -1; j <= 1; j++)
+            {
+				Field field = this.GetField(new Vector2Int(i, j));
+
+				// Check for null value
+				if (field == null)
+                {
+					continue;
+                }
+
+				// Add to the fields
+				fields.Add(field);
+            }
+        }
+
+		return fields;
+    }
+
 	/**
 	 * This method reveals the field.
 	 */
 
     public void Reveal()
     {
-		if (GetState() == FieldState.Revealed)
+		if (GetState() != FieldState.Hidden)
 			return;
 
 		// Reveal the field
@@ -50,12 +77,18 @@ public class Field : MonoBehaviour
 	/**
 	 * This method flags the field.
 	 */
+
 	public void Flag()
 	{
 		if (GetState() == FieldState.Revealed)
 			return;
 
-		SetState(GetState() == Field.FieldState.Flagged ? Field.FieldState.Hidden : Field.FieldState.Flagged);
+		if (!Game.GetInstance().HasEnded())
+		{
+			SetState(GetState() == Field.FieldState.Flagged ? Field.FieldState.Hidden : Field.FieldState.Flagged);
+		}
+
+		// Flag from the controller;
 		controller.Flag();
 	}
 
@@ -150,12 +183,6 @@ public class Field : MonoBehaviour
 
 	public void setPosition(Vector2Int position)
     {
-		if (this.position != null)
-        {
-			return;
-        }
-
-
 		this.position = position;
     }
 

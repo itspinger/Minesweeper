@@ -12,7 +12,21 @@ public class FieldImageContext : FieldContext
         // Check if the field has been flagged
         if (field.GetState() == Field.FieldState.Flagged)
         {
-            controller.flagImage.gameObject.SetActive(true);
+            if (!Game.GetInstance().HasEnded())
+            {
+                controller.flagImage.gameObject.SetActive(true);
+                return;
+            }
+
+            // The game has ended
+            // We need to check for the x image
+            if (!controller.flagImage.gameObject.activeSelf)
+            {
+                return;
+            }
+
+            controller.flagImage.gameObject.SetActive(false);
+            controller.xImage.gameObject.SetActive(true);
             return;
         }
 
@@ -40,20 +54,5 @@ public class FieldImageContext : FieldContext
             controller.mineImage.gameObject.SetActive(true);
             return;
         }
-
-        // Not a mine
-        // We need to check for the flagImage again
-        if (!controller.flagImage.gameObject.activeSelf)
-        {
-            return;
-        }
-
-        // Check if the game has ended
-        // And do this
-        if (!Game.GetInstance().HasEnded())
-            return;
-
-        controller.flagImage.gameObject.SetActive(false);
-        controller.xImage.gameObject.SetActive(true);
     }
 }

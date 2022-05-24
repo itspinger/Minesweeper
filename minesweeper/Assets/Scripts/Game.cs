@@ -191,6 +191,17 @@ public class Game : MonoBehaviour
             // Update each field
             started = true;
 
+            // Unflag all items
+            // That were flagged for no reason
+            foreach (var f in fields)
+            {
+                if (f.GetState() != Field.FieldState.Flagged)
+                    continue;
+
+                // Unflag
+                f.Flag();
+            }
+
             // Start the timer
             GameManager.GetInstance().StartTimer();
         }
@@ -211,14 +222,11 @@ public class Game : MonoBehaviour
         if (field.GetAdjacentMines() != 0)
         {
             field.Reveal();
-
-            // Check for winning condition here
             TryWinGame();
             return;
         }
 
         StartCoroutine(FloodFill(field));
-        // Check win condition
         TryWinGame();
     }
 
@@ -229,7 +237,6 @@ public class Game : MonoBehaviour
             yield break;
         }
 
-        Debug.Log("Game has finished");
         finished = true;
 
         // Revealed state
@@ -250,18 +257,30 @@ public class Game : MonoBehaviour
             }
         }
 
+        // Change for flagged
+        foreach (var f in fields)
+        {
+            if (!f.IsMine() && f.GetState() == Field.FieldState.Flagged)
+            {
+                // Reveal the x image
+                // As the guess is not correct
+                f.Flag();
+
+                // Wait just a tiny bit
+                yield return new WaitForSeconds(0.05f);
+            }
+        }
+
         // Invoke end event
         OnEnd.Invoke();
     }
 
     private IEnumerator FloodFill(Field field)
     {
-        if (field.GetState() == Field.FieldState.Revealed)
+        if (field.GetState() != Field.FieldState.Hidden || field.IsMine())
             yield break;
 
-        if (field.IsMine())
-            yield break;
-
+        // Reveal the field
         field.Reveal();
 
         // Check if field has 0 adjacent; if so, flood again to 4 corners
@@ -269,8 +288,7 @@ public class Game : MonoBehaviour
             yield break;
 
         yield return new WaitForEndOfFrame();
-
-        foreach (var adjacentField in GetAdjacentFields(field))
+        foreach (var adjacentField in field.GetAdjacentFields())
         {
             StartCoroutine(FloodFill(adjacentField));
         }
@@ -323,12 +341,14 @@ public class Game : MonoBehaviour
         foreach (var field in fields)
         {
             // We need to check for null
-            // Since the game hasn't started yet
+            // Since the game might not have started yet
             if (field == null)
             {
                 continue;
             }
 
+            // Check for fields
+            // That are flagged
             if (field.GetState() == Field.FieldState.Flagged)
             {
                 count++;
@@ -336,34 +356,6 @@ public class Game : MonoBehaviour
         }
 
         return count;
-    }
-
-    public IEnumerable<Field> GetAdjacentFields(Field field)
-    {
-        var adjacent = new List<Field>();
-        var pos = field.GetPosition();
-
-        if (pos.x + 1 < rows)
-        {
-            adjacent.Add(fields[pos.x + 1, pos.y]);
-        }
-
-        if (pos.x - 1 >= 0)
-        {
-            adjacent.Add(fields[pos.x - 1, pos.y]);
-        }
-
-        if (pos.y + 1 < columns)
-        {
-            adjacent.Add(fields[pos.x, pos.y + 1]);
-        }
-
-        if (pos.y - 1 >= 0)
-        {
-            adjacent.Add(fields[pos.x, pos.y - 1]);
-        }
-
-        return adjacent;
     }
 
     public static Game GetInstance()
