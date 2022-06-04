@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     public TMP_Text scoreText;
     public TMP_Text recordText;
+    public TMP_Text loseRecordText;
 
     private void Awake()
     {
@@ -61,21 +62,25 @@ public class GameManager : MonoBehaviour
 
     private void UpdateTime()
     {
-        // Update the score text
         scoreText.text = timeText.text;
+        int currentScore, previousScore;
 
-        // In order to see if it is a new record
-        // We need to check for the differences in text
-        try
+        // If they cannot convert to int
+        // Do not update and just return
+        if (!int.TryParse(scoreText.text, out currentScore) || !int.TryParse(recordText.text, out previousScore)) {
+            return;
+        } 
+
+        // If the record is lower than don't apply
+        if (currentScore > previousScore)
         {
-            if (int.Parse(recordText.text) > int.Parse(scoreText.text))
-            {
-                recordText.text = scoreText.text;
-            }
+            return;
         }
-        catch (Exception) { 
-        }
+
+        recordText.text = scoreText.text;
+        loseRecordText.text = scoreText.text;
     }
+
 
     /**
      * This method starts the current timer.

@@ -21,7 +21,13 @@ public class Field : MonoBehaviour
 		// Attaches the left click and right click listener
 		// To the game manager
 		clickableButton.OnLeftClick.AddListener(() => Game.GetInstance().HandleLeftClick(this));
-        clickableButton.OnRightClick.AddListener(() => Game.GetInstance().HandleRightClick(this));
+        clickableButton.OnRightClick.AddListener(() =>
+		{
+			if (Game.GetInstance().HasEnded())
+				return;
+
+			this.Flag();
+		});
     }
 
     /**
@@ -44,6 +50,10 @@ public class Field : MonoBehaviour
         {
 			for (int j = -1; j <= 1; j++)
             {
+				// Check if it's not the same field
+				if (i == 0 && j == 0)
+					continue;
+
 				Field field = this.GetField(new Vector2Int(i, j));
 
 				// Check for null value
@@ -69,7 +79,6 @@ public class Field : MonoBehaviour
 		if (GetState() != FieldState.Hidden)
 			return;
 
-		// Reveal the field
 		SetState(Field.FieldState.Revealed);
 		controller.Reveal();
     }
@@ -210,6 +219,7 @@ public class Field : MonoBehaviour
 	 * There are only 2 allowed states of any field: Default, which corresponds
 	 * to the field which isn't a mine, and a Mine field.
 	 */
+
 	public enum FieldType
 	{
 		Default,

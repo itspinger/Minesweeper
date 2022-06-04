@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -16,12 +15,12 @@ public class Game : MonoBehaviour
     // Events for different calls
     public UnityEvent OnCreate;
     public UnityEvent OnWin;
-    public UnityEvent OnEnd;
+    public UnityEvent OnLose;
 
     // Game Settings
-    private int rows = 8;
-    private int columns = 10;
-    private int mines = 10;
+    private int rows = 14;
+    private int columns = 18;
+    private int mines = 40;
 
     private bool started, finished;
     private Field[,] fields;
@@ -44,7 +43,7 @@ public class Game : MonoBehaviour
 
     private void Start()
     {
-        // Initialize the stuff
+        // Initialize the game
         StartCoroutine(CreateGame());
     }
 
@@ -89,14 +88,12 @@ public class Game : MonoBehaviour
         // Invoke the event
         OnCreate.Invoke();
 
-        // Now initalize the important stuff
+        // Initialize the fields
         InitField();
 
-        // Set the game to not finished and not started
+        // Reset the data
         started = false;
         finished = false;
-
-        // Reset the timer
         GameManager.GetInstance().ResetTimer();
     }
 
@@ -110,16 +107,16 @@ public class Game : MonoBehaviour
             Destroy(field.gameObject);
         }
 
-        // Initialize the fields again
+        // Initialize fields
         fields = new Field[rows, columns];
 
-        // Get the grid
-        // In order to fill out the game
+        // Change the size of the grid
+        // According to rows and columns
         GridLayoutGroup grid = fieldTranfsorm.GetComponent<GridLayoutGroup>();
         fieldTranfsorm.sizeDelta = new Vector2(columns * grid.cellSize.x, rows * grid.cellSize.y);
 
-        // Create new fields
-        // For the game
+        // Fill out the grid
+        // And save the fields
         for (var i = 0; i < rows; i++)
         {
             for (var j = 0; j < columns; j++)
@@ -163,18 +160,6 @@ public class Game : MonoBehaviour
         StartCoroutine(CreateGame());
     }
 
-    public void HandleRightClick(Field field)
-    {
-        // Cancel the event if the game is finished
-        if (finished)
-        {
-            return;
-        }
-
-        // Perform the field statement
-        field.Flag();
-    }
-
     public void HandleLeftClick(Field field)
     {
         // Check the state of the field
@@ -187,8 +172,6 @@ public class Game : MonoBehaviour
             // Based on the first clicked field
             FieldGenerator.CreateMines(fields, mines, field);
             FieldGenerator.CountAdjacentMines(fields);
-
-            // Update each field
             started = true;
 
             // Unflag all items
@@ -228,6 +211,49 @@ public class Game : MonoBehaviour
 
         StartCoroutine(FloodFill(field));
         TryWinGame();
+    }
+
+    private IEnumerator FloodFill(Field field)
+    {
+        if (field.GetState() != Field.FieldState.Hidden || field.IsMine())
+            yield break;
+
+        // Reveal the field
+        field.Reveal();
+
+        // Check if field has 0 adjacent; if so, flood again to 8 adjacent
+        if (field.GetAdjacentMines() != 0)
+            yield break;
+
+        yield return new WaitForEndOfFrame();
+        foreach (var adjacentField in field.GetAdjacentFields())
+        {
+            StartCoroutine(FloodFill(adjacentField));
+        }
+    }
+
+    private void TryWinGame()
+    {
+        // Search for any fields
+        // Which are not mines and uncovered
+        foreach (var field in fields)
+        {
+            // Try to find a field that isn't a mine
+            // And isn't revealed
+            if (!field.IsMine() && field.GetState() != Field.FieldState.Revealed)
+            {
+                return;
+            }
+        }
+
+        // The game is finished
+        OnWin.Invoke();
+
+        // Stop the timer
+        GameManager.GetInstance().StopTimer();
+
+        // Set the flag to finished
+        finished = true;
     }
 
     public IEnumerator EndGame(Field field)
@@ -272,50 +298,7 @@ public class Game : MonoBehaviour
         }
 
         // Invoke end event
-        OnEnd.Invoke();
-    }
-
-    private IEnumerator FloodFill(Field field)
-    {
-        if (field.GetState() != Field.FieldState.Hidden || field.IsMine())
-            yield break;
-
-        // Reveal the field
-        field.Reveal();
-
-        // Check if field has 0 adjacent; if so, flood again to 4 corners
-        if (field.GetAdjacentMines() != 0)
-            yield break;
-
-        yield return new WaitForEndOfFrame();
-        foreach (var adjacentField in field.GetAdjacentFields())
-        {
-            StartCoroutine(FloodFill(adjacentField));
-        }
-    }
-
-    private void TryWinGame()
-    {
-        // Search for any fields
-        // Which are not mines and uncovered
-        foreach (var field in fields)
-        {
-            // Try to find a field that isn't a mine
-            // And isn't revealed
-            if (!field.IsMine() && field.GetState() != Field.FieldState.Revealed)
-            {
-                return;
-            }
-        }
-
-        // The game is finished
-        OnWin.Invoke();
-
-        // Stop the timer
-        GameManager.GetInstance().StopTimer();
-
-        // Set the flag to finished
-        finished = true;
+        OnLose.Invoke();
     }
 
     public bool HasEnded()

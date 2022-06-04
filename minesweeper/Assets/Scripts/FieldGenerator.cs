@@ -82,25 +82,17 @@ public static class FieldGenerator
 		return fields[x, y].IsMine();
 	}
 
-	/**
-	 * 
-	 */
+
 
 	public static void CountAdjacentMines(Field[,] fields)
 	{
-		for (var i = 0; i < fields.GetLength(0); i++)
-		{
-			for (var j = 0; j < fields.GetLength(1); j++)
-			{
-				var field = fields[i, j];
-				
-				// Check if it's a mine
-				if (field.GetFieldType() == Field.FieldType.Mine)
-					continue;
+		foreach (var field in fields)
+        {
+			if (field.IsMine())
+				return;
 
-				var count = field.GetAdjacentFields().Count(field => field.IsMine());
-				fields[i, j].SetAdjacentMines(count);
-			}
-		}
+			field.SetAdjacentMines(field.GetAdjacentFields()
+				.Count(field => field.IsMine()));
+        }
 	}
 }

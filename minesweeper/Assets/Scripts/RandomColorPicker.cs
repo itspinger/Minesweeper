@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RandomColorPicker
+public static class RandomColorPicker
 {
     private readonly static List<Color32> colors = new List<Color32>();
     private readonly static System.Random random = new System.Random();
